@@ -89,6 +89,14 @@ class CanonPlayer {
     this.pickup = score.visual.pickup || 0;
     this.swing = score.visual.swing || 0.5;
     this.meter = score.visual.meter || 4;
+    this.performance = score.visual.performance || null;
+    this.playbackBpm = this.performance ? this.performance.bpm : score.bpm;
+    this.totalBeats = this.performance ? this.performance.duration * this.playbackBpm / 60 + this.performance.offset_beats : score.beats;
+    this.performanceAudio = this.performance ? this.performance.stems.map(stem => {
+      const element = new Audio(stem.src);
+      element.preload = "auto";
+      return { ...stem, element };
+    }) : [];
     this.position = 0;
     this.playing = false;
     this.startedAt = 0;
@@ -96,6 +104,12 @@ class CanonPlayer {
     this.lines = score.visual.lines;
     this.sources = score.visual.sources.map(source => {
       let notes = this.extractSourceNotes(source);
+      if (source.repeat_head) {
+        const heads = score.staffs[source.track]
+          .filter(note => note.v === 0 && Math.abs(note.t - source.repeat_head.at) < .0001)
+          .map(note => ({ ...note, t: 0, p: note.p + source.repeat_head.semitones, y: note.y + source.repeat_head.y }));
+        notes = [...heads, ...notes];
+      }
       if (source.split_bars) notes = this.splitAtBars(notes, source.split_bars);
       const eventCount = Math.max(...notes.map(note => note.i)) + 1;
       return { ...source, notes, eventCount };
@@ -171,7 +185,7 @@ class CanonPlayer {
 
   bind() {
     this.button.addEventListener("click", () => this.playing ? this.stop() : this.play());
-    this.range.max = this.score.beats;
+    this.range.max = this.totalBeats;
     this.range.addEventListener("input", () => {
       const resume = this.playing;
       this.stop(false);
@@ -192,7 +206,9 @@ class CanonPlayer {
       this.muted[index] = !this.muted[index];
       button.setAttribute("aria-pressed", String(!this.muted[index]));
       button.classList.toggle("muted", this.muted[index]);
-      if (resume) {
+      if (resume && this.performance) {
+        this.syncPerformanceMute();
+      } else if (resume) {
         this.stop(false);
         this.play();
       } else {
@@ -251,7 +267,12 @@ class CanonPlayer {
     const geometry = source.geometry;
     const padX = 18;
     const usable = this.width - padX * 2;
-    const pitches = source.notes.map(item => item.y);
+    const offsets = [0];
+    if (source.modulation) offsets.push(...source.modulation.layers.map(layer => layer.y));
+    for (const line of this.lines.filter(line => line.source === sourceIndex && line.modulation)) {
+      offsets.push(...line.modulation.layers.map(layer => layer.y));
+    }
+    const pitches = source.notes.flatMap(item => offsets.map(offset => item.y + offset));
     const low = Math.min(...pitches) - 1;
     const high = Math.max(...pitches) + 1;
     const pitchHeight = geometry.voicePitchArea / Math.max(7, high - low);
@@ -293,8 +314,8 @@ class CanonPlayer {
   }
 
   activeSourceNote(line, beat) {
-    const ordinal = this.activeOrdinal(line.tracks, beat);
-    if (ordinal === null) return null;
+    const scoreBeat = this.performance ? beat % this.score.beats : beat;
+    const ordinal = this.activeOrdinal(line.tracks, scoreBeat);
     const source = this.sources[line.source];
     if (line.traversal) {
       const targetBar = Math.floor(beat / this.meter);
@@ -306,10 +327,12 @@ class CanonPlayer {
       return source.notes.find(note => note.t <= sourceTime && note.t + note.d > sourceTime) || null;
     }
     if (line.map) {
+      if (beat < this.score.beats && ordinal === null) return null;
       const sourceTime = this.mappedSourceTime(line.map, beat);
       if (sourceTime === null) return null;
       return source.notes.find(note => note.t <= sourceTime && note.t + note.d > sourceTime) || null;
     }
+    if (ordinal === null) return null;
     const sourceOrdinal = ordinal % source.eventCount;
     return source.notes.find(note => note.i === sourceOrdinal) || null;
   }
@@ -325,6 +348,24 @@ class CanonPlayer {
     return sourceTime;
   }
 
+  modulationLayer(line, beat) {
+    const source = this.sources[line.source];
+    const modulation = line.modulation || source.modulation;
+    if (!modulation || !line.map || line.map.segments) return null;
+    const unwrapped = beat * line.map.scale + line.map.offset;
+    if (unwrapped < 0) return null;
+    const cycle = Math.floor(unwrapped / modulation.period);
+    return modulation.layers[cycle % modulation.layers.length];
+  }
+
+  displayNote(note, line, beat) {
+    const transformed = line.transform === "inversion"
+      ? this.invertedNote(note, line.source)
+      : note;
+    const layer = this.modulationLayer(line, beat);
+    return layer ? { ...transformed, y: transformed.y + layer.y } : transformed;
+  }
+
   trackMuted(trackIndex) {
     const lineIndex = this.lines.findIndex(line => line.tracks.includes(trackIndex));
     return lineIndex >= 0 && this.muted[lineIndex];
@@ -338,13 +379,17 @@ class CanonPlayer {
     ctx.fillRect(0, 0, this.width, this.height);
     const padX = 18;
     const usable = this.width - padX * 2;
+    const visualBeat = this.position % this.score.beats;
     ctx.textBaseline = "middle";
 
     this.sources.forEach((source, sourceIndex) => {
       const geometry = source.geometry;
       ctx.fillStyle = geometry.bass ? "#77778a" : "#f3a712";
       ctx.font = geometry.bass ? "9px UbuntuMono, monospace" : "10px UbuntuMono, monospace";
-      const suffix = source.inversion ? " · INVERSIE ↕" : "";
+      const annotations = [];
+      if (source.inversion) annotations.push("INVERSIE ↕");
+      if (source.modulation) annotations.push(`MOD ${source.modulation.label}`);
+      const suffix = annotations.length ? " · " + annotations.join(" · ") : "";
       ctx.fillText((source.label + suffix).toUpperCase(), padX, geometry.labelY);
       for (let row = 0; row < geometry.rows; row++) {
         const rowPosition = geometry.rowBeats
@@ -396,6 +441,23 @@ class CanonPlayer {
           ctx.restore();
         }
       }
+      if (source.modulation) {
+        const colorIndex = this.lines.findIndex(line => line.source === sourceIndex);
+        ctx.save();
+        ctx.fillStyle = VOICE_COLORS[colorIndex % VOICE_COLORS.length];
+        ctx.strokeStyle = VOICE_COLORS[colorIndex % VOICE_COLORS.length];
+        for (const layer of source.modulation.layers.slice(1)) {
+          for (const note of source.notes) {
+            for (const box of this.noteBoxes({ ...note, y: note.y + layer.y }, sourceIndex)) {
+              ctx.globalAlpha = .07;
+              ctx.fillRect(box.x, box.y, box.width, box.height);
+              ctx.globalAlpha = .28;
+              ctx.strokeRect(box.x + .5, box.y + .5, Math.max(0, box.width - 1), Math.max(0, box.height - 1));
+            }
+          }
+        }
+        ctx.restore();
+      }
       if (source.inversion) {
         const colorIndex = source.inversion.lineIndexes.find(index => !this.muted[index]);
         if (colorIndex !== undefined) {
@@ -411,6 +473,26 @@ class CanonPlayer {
           }
           ctx.restore();
         }
+        for (const lineIndex of source.inversion.lineIndexes) {
+          const line = this.lines[lineIndex];
+          const modulation = line.modulation || source.modulation;
+          if (!modulation || this.muted[lineIndex]) continue;
+          ctx.save();
+          ctx.fillStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
+          ctx.strokeStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
+          for (const layer of modulation.layers.slice(1)) {
+            for (const note of source.notes) {
+              const reflected = this.invertedNote(note, sourceIndex);
+              for (const box of this.noteBoxes({ ...reflected, y: reflected.y + layer.y }, sourceIndex, true)) {
+                ctx.globalAlpha = .07;
+                ctx.fillRect(box.x, box.y, box.width, box.height);
+                ctx.globalAlpha = .28;
+                ctx.strokeRect(box.x + .5, box.y + .5, Math.max(0, box.width - 1), Math.max(0, box.height - 1));
+              }
+            }
+          }
+          ctx.restore();
+        }
       }
       for (const note of source.notes) {
         for (const box of this.noteBoxes(note, sourceIndex)) {
@@ -421,7 +503,7 @@ class CanonPlayer {
       }
       ctx.globalAlpha = 1;
       const sourceDisplayBeats = geometry.sourceBeats;
-      const mappedPosition = source.map ? this.mappedSourceTime(source.map, this.position) : this.position + this.displayOffset;
+      const mappedPosition = source.map ? this.mappedSourceTime(source.map, visualBeat) : visualBeat + this.displayOffset;
       const displayPosition = ((mappedPosition % sourceDisplayBeats) + sourceDisplayBeats) % sourceDisplayBeats;
       const playPosition = this.rowAt(displayPosition, geometry);
       const playX = padX + (displayPosition - playPosition.start) / playPosition.beats * usable;
@@ -435,12 +517,12 @@ class CanonPlayer {
       if (this.muted[lineIndex]) return;
       const note = this.activeSourceNote(line, this.position);
       if (!note) return;
-      const boxes = this.noteBoxes(note, line.source);
-      if (line.transform === "inversion") {
-        const invertedBoxes = this.noteBoxes(this.invertedNote(note, line.source), line.source, true);
+      const inverted = line.transform === "inversion";
+      const boxes = this.noteBoxes(this.displayNote(note, line, this.position), line.source, inverted);
+      if (inverted) {
         ctx.save();
         ctx.globalAlpha = .78;
-        for (const box of invertedBoxes) {
+        for (const box of boxes) {
           ctx.fillStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
           ctx.fillRect(box.x - 2, box.y - 2 - lineIndex, box.width + 4, box.height + 4);
         }
@@ -485,14 +567,57 @@ class CanonPlayer {
     return whole + 0.5 + (fraction - this.swing) * 0.5 / (1 - this.swing);
   }
 
+  performancePosition() {
+    const visualSeconds = this.position * 60 / this.playbackBpm;
+    const offsetSeconds = this.performance.offset_beats * 60 / this.playbackBpm;
+    return Math.max(0, Math.min(this.performance.duration, visualSeconds - offsetSeconds));
+  }
+
+  syncPerformanceMute() {
+    this.performanceAudio.forEach(stem => {
+      stem.element.muted = stem.tracks.every(track => this.trackMuted(track));
+    });
+  }
+
+  async playPerformance() {
+    const start = this.performancePosition();
+    const waitBeats = Math.max(0, this.performance.offset_beats - this.position);
+    const waitMs = waitBeats * 60000 / this.playbackBpm;
+    this.syncPerformanceMute();
+    this.performanceAudio.forEach(stem => {
+      stem.element.pause();
+      stem.element.currentTime = start;
+      stem.element.playbackRate = 1;
+    });
+    this.playing = true;
+    this.performanceWaiting = waitMs > 0;
+    this.performanceStartedAt = performance.now() / 1000 - this.position * 60 / this.playbackBpm;
+    this.button.textContent = "■";
+    this.button.title = "Stop";
+    if (this.performanceWaiting) {
+      this.performanceTimer = setTimeout(async () => {
+        if (!this.playing) return;
+        await Promise.all(this.performanceAudio.map(stem => stem.element.play()));
+        this.performanceWaiting = false;
+      }, waitMs);
+    } else {
+      await Promise.all(this.performanceAudio.map(stem => stem.element.play()));
+    }
+    this.tick();
+  }
+
   async play() {
     if (activePlayer && activePlayer !== this) activePlayer.stop();
     activePlayer = this;
+    if (this.performance) {
+      await this.playPerformance();
+      return;
+    }
     const context = await audio.ensure();
     this.playing = true;
     this.button.textContent = "■";
     this.button.title = "Stop";
-    const secondsPerBeat = 60 / this.score.bpm;
+    const secondsPerBeat = 60 / this.playbackBpm;
     this.startedAt = context.currentTime - this.audioBeat(this.position) * secondsPerBeat;
     const startAt = context.currentTime + .035;
     this.score.staffs.forEach((staff, voice) => {
@@ -523,10 +648,14 @@ class CanonPlayer {
 
   tick() {
     if (!this.playing) return;
-    const secondsPerBeat = 60 / this.score.bpm;
-    const audioPosition = (audio.context.currentTime - this.startedAt) / secondsPerBeat;
+    const secondsPerBeat = 60 / this.playbackBpm;
+    const audioPosition = this.performance
+      ? this.performanceWaiting
+        ? (performance.now() / 1000 - this.performanceStartedAt) / secondsPerBeat
+        : this.performance.offset_beats + this.performanceAudio[0].element.currentTime / secondsPerBeat
+      : (audio.context.currentTime - this.startedAt) / secondsPerBeat;
     this.position = this.scoreBeat(audioPosition);
-    if (this.position >= this.score.beats) {
+    if (this.position >= this.totalBeats) {
       this.position = 0;
       this.stop(false);
       this.draw(); this.updateTime();
@@ -539,21 +668,24 @@ class CanonPlayer {
 
   stop(reset = true) {
     this.playing = false;
+    clearTimeout(this.performanceTimer);
     cancelAnimationFrame(this.frame);
     this.nodes.forEach(node => { try { node.stop(); } catch (_) {} });
     this.nodes = [];
+    this.performanceAudio.forEach(stem => stem.element.pause());
     this.button.textContent = "▶";
     this.button.title = "Afspelen";
     if (reset) {
       this.position = 0;
       this.range.value = 0;
+      this.performanceAudio.forEach(stem => { stem.element.currentTime = 0; });
       this.draw(); this.updateTime();
     }
   }
 
   updateTime() {
-    const total = this.score.beats * 60 / this.score.bpm;
-    const current = this.position * 60 / this.score.bpm;
+    const total = this.totalBeats * 60 / this.playbackBpm;
+    const current = this.position * 60 / this.playbackBpm;
     this.timeLabel.textContent = `${this.clock(current)} / ${this.clock(total)}`;
   }
 
@@ -578,7 +710,9 @@ fetch("canon-data.json")
         <span class="player-time">0:00</span>
       </div><canvas aria-label="Diatonische pianorolls van de dux-bronnen"></canvas>
       <div class="player-footer"><span class="player-bpm">Partituur laden…</span><div class="voice-control" aria-label="Muzikale lijnen"></div></div>`;
-      element.querySelector(".player-bpm").textContent = `${score.bpm} bpm · ${score.visual.lines.length} muzikale lijnen · fragment`;
+      const playerKind = score.visual.performance ? "uitvoering" : "fragment";
+      const playerBpm = score.visual.performance ? score.visual.performance.bpm : score.bpm;
+      element.querySelector(".player-bpm").textContent = `${playerBpm} bpm · ${score.visual.lines.length} muzikale lijnen · ${playerKind}`;
       const player = new CanonPlayer(element, score);
       player.updateTime();
     });

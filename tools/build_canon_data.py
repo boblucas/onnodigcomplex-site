@@ -46,9 +46,16 @@ INVERSION_FOLLOWER_MAP = {"segments": [
     {"start": 52.0, "end": 84.0, "source": 4.0},
 ]}
 
+
+def modulation(period: float, label: str, *layers: tuple[float, float]) -> dict:
+    return {"period": period, "label": label, "layers": [
+        {"semitones": semitones, "y": y} for semitones, y in layers
+    ]}
+
+
 VISUALS = {
     "fly": {"start": 1.0, "beats": 72.0, "wrap": 24.0, "meter": 3, "sources": [(1, "dux", "primary")], "lines": [([1], 0, "1"), ([0], 0, "2")], "maps": [{"scale": 1, "offset": 0}, {"scale": 1, "offset": -1}], "bass": [2]},
-    "chromatic": {"beats": 38.0, "row_beats": [18.0, 20.0], "pickup": 2.0, "meter": 4, "sources": [(1, "dux", "primary")], "lines": [([1, 3, 6], 0, "1"), ([0, 2, 5], 0, "2")], "bass": [4, 7]},
+    "chromatic": {"beats": 38.0, "row_beats": [38.0], "pickup": 2.0, "meter": 4, "sources": [(1, "dux", "primary")], "lines": [([1, 3, 6], 0, "1"), ([0, 2, 5], 0, "2")], "bass": [4, 7]},
     "autumn": {"beats": 98.0, "row_beats": [18.0, 16.0, 16.0, 16.0, 16.0, 16.0], "pickup": 2.0, "meter": 4, "swing": 0.6, "sources": [(0, "dux", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2")], "maps": [{"scale": 1, "offset": 0}, {"scale": 1, "offset": -1.5}], "bass": [2]},
     "inversion": {"beats": 84.0, "wrap": 48.0, "meter": 4, "source_beats": [48.0], "source_wraps": [48.0], "source_sections": [[(0.0, 44.0), (80.0, 84.0)]], "source_maps": [INVERSION_REPEAT_MAP], "bass_beats": 48.0, "bass_sections": [(0.0, 44.0), (80.0, 84.0)], "bass_map": INVERSION_REPEAT_MAP, "sources": [(4, "dux", "primary")], "lines": [([4, 2, 7, 0], 0, "1"), ([5, 3, 8, 1], 0, "2")], "maps": [INVERSION_REPEAT_MAP, INVERSION_FOLLOWER_MAP], "transforms": [None, "inversion"], "bass": [6, 9, 10]},
     "slowboat": {"beats": 32.0, "wrap": 32.0, "meter": 4, "sources": [(0, "dux", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2")], "transforms": [None, "inversion"], "bass": [2]},
@@ -58,16 +65,16 @@ VISUALS = {
         {"bars": list(reversed(range(16))), "reverse": True},
         {"bars": [row * 4 + column for column in range(4) for row in range(4)], "reverse": False},
         {"bars": [row * 4 + column for column in reversed(range(4)) for row in reversed(range(4))], "reverse": True},
-    ], "bass": [4]},
+    ], "bass": []},
     "intervals": {"sources": [(1, "dux", "primary")], "lines": [([1], 0, "1"), ([0], 0, "2")], "bass": [2]},
     "fugue": {"sources": [(0, "dux A", "primary"), (3, "dux B", "primary")], "lines": [([0], 0, "A1"), ([1, 4], 0, "A2"), ([2, 5], 0, "A3"), ([3], 1, "B")], "bass": []},
     "double": {"beats": 70.0, "repeat_start": 4.0, "repeat_beats": 32.0, "repeat_count": 2, "repeat_tail": 2.0, "source_start": 4.0, "display_beats": 32.0, "display_offset": -4.0, "wrap": 16.0, "meter": 4, "sources": [(0, "dux A", "primary"), (3, "dux B", "primary")], "lines": [([1], 0, "A1"), ([0], 0, "A2"), ([2], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": -8, "modulo": 32}, {"scale": 1, "offset": -4, "modulo": 32}, {"scale": 1, "offset": -8, "modulo": 32}, {"scale": 1, "offset": -4, "modulo": 32}], "transforms": ["inversion", None, None, None], "bass": []},
-    "doublemod": {"beats": 48.0, "meter": 4, "source_beats": [16.0, 24.0], "sources": [(0, "dux A · 4", "primary"), (2, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 1, "offset": -8, "modulo": 16}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 1, "offset": -8, "modulo": 24}], "bass": []},
-    "phasing": {"beats": 144.0, "meter": 4, "source_beats": [20.0, 28.0], "sources": [(0, "dux A · 5", "primary"), (2, "dux B · 7", "primary")], "lines": [([1], 0, "A1"), ([0], 0, "A2"), ([3], 1, "B1"), ([2], 1, "B2")], "maps": [{"scale": 1, "offset": -4, "modulo": 20}, {"scale": 1, "offset": 0, "modulo": 20}, {"scale": 1, "offset": -4, "modulo": 28}, {"scale": 1, "offset": 0, "modulo": 28}], "bass": []},
-    "vitam": {"meter": 4, "source_beats": [16.0], "sources": [(2, "dux · 4", "primary")], "lines": [([2, 3], 0, "1×"), ([0, 1], 0, "2×")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 0.5, "offset": 0, "modulo": 16}], "transforms": [None, "inversion"], "bass": [4, 5]},
-    "doublemod2": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "sources": [(0, "dux A · 6", "primary"), (2, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3, 4], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}], "transforms": [None, "inversion", None, "inversion"], "bass": []},
-    "multi": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "sources": [(0, "dux A · 6", "primary"), (1, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([2], 0, "A2"), ([1], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": -4, "modulo": 24}], "transforms": [None, "inversion", None, "inversion"], "bass": []},
-    "grail": {"beats": 96.0, "meter": 4, "source_beats": [24.0], "sources": [(0, "dux · 6", "primary")], "lines": [([0], 0, "1×"), ([2, 4], 0, "2×"), ([1, 3], 0, "4×")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 0.25, "offset": 0, "modulo": 24}], "transforms": [None, "inversion", None], "bass": []},
+    "doublemod": {"beats": 48.0, "meter": 4, "source_beats": [16.0, 24.0], "modulations": [modulation(16, "−2 ×3", (0, 0), (-2, -1), (-4, -2.5)), modulation(24, "+3 ×2", (0, 0), (3, 2))], "sources": [(0, "dux A · 4", "primary"), (2, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 1, "offset": -8, "modulo": 16}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 1, "offset": -8, "modulo": 24}], "bass": []},
+    "phasing": {"beats": 144.0, "meter": 4, "source_beats": [20.0, 28.0], "modulations": [modulation(20, "+1 ×8", (0, 0), (1, .5), (2, 1), (3, 1.5), (4, 2), (5, 2.5), (6, 3), (7, 3.5)), modulation(28, "−1 ×6", (0, 0), (-1, -.5), (-2, -1), (-3, -1.5), (-4, -2), (-5, -2.5))], "sources": [(0, "dux A · 5", "primary"), (2, "dux B · 7", "primary")], "lines": [([1], 0, "A1"), ([0], 0, "A2"), ([3], 1, "B1"), ([2], 1, "B2")], "maps": [{"scale": 1, "offset": -4, "modulo": 20}, {"scale": 1, "offset": 0, "modulo": 20}, {"scale": 1, "offset": -4, "modulo": 28}, {"scale": 1, "offset": 0, "modulo": 28}], "bass": []},
+    "vitam": {"meter": 4, "source_beats": [16.0], "source_repeat_heads": [{"at": 16.0, "semitones": 4, "y": 2.5}], "performance": {"bpm": 110, "offset_beats": 1, "duration": 140.225306, "stems": [{"src": "audio/vitam_dux.mp3", "tracks": [2, 3]}, {"src": "audio/vitam_augmented.mp3", "tracks": [0, 1]}, {"src": "audio/vitam_bassline.mp3", "tracks": [4, 5]}]}, "modulations": [modulation(16, "−4 ×3", (0, 0), (-4, -2.5), (-8, -4.5))], "line_modulations": [modulation(16, "−4 ×3", (0, 0), (-4, -2.5), (-8, -4.5)), modulation(16, "+4 ×2", (0, 0), (4, 2.5))], "sources": [(2, "dux · 4", "primary")], "lines": [([2, 3], 0, "1×"), ([0, 1], 0, "2×")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 0.5, "offset": 0, "modulo": 16}], "transforms": [None, "inversion"], "bass": [4, 5]},
+    "doublemod2": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "modulations": [modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "+4 ×2", (0, 0), (4, 2.5))], "line_modulations": [modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "0 ×1", (0, 0)), modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "0 ×1", (0, 0))], "sources": [(0, "dux A · 6", "primary"), (2, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3, 4], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}], "transforms": [None, "inversion", None, "inversion"], "bass": []},
+    "multi": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "modulations": [modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "+4 ×2", (0, 0), (4, 2.5))], "line_modulations": [modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "0 ×1", (0, 0)), modulation(24, "+4 ×2", (0, 0), (4, 2.5)), modulation(24, "0 ×1", (0, 0))], "sources": [(0, "dux A · 6", "primary"), (1, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([2], 0, "A2"), ([1], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": -4, "modulo": 24}], "transforms": [None, "inversion", None, "inversion"], "bass": []},
+    "grail": {"beats": 96.0, "meter": 4, "source_beats": [24.0], "modulations": [modulation(24, "+4 ×4", (0, 0), (4, 2.5), (8, 4.5), (12, 7))], "line_modulations": [modulation(24, "+4 ×4", (0, 0), (4, 2.5), (8, 4.5), (12, 7)), modulation(24, "−4 ×2", (0, 0), (-4, -2.5)), modulation(24, "0 ×1", (0, 0))], "sources": [(0, "dux · 6", "primary")], "lines": [([0], 0, "1×"), ([2, 4], 0, "2×"), ([1, 3], 0, "4×")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 0.25, "offset": 0, "modulo": 24}], "transforms": [None, "inversion", None], "bass": []},
 }
 
 DURATIONS = {
@@ -318,6 +325,12 @@ def parse_score(key: str, title: str, filename: str, clip_beats: int) -> dict:
     if "source_wraps" in visual:
         for source, wrap in zip(sources, visual["source_wraps"]):
             source["wrap"] = wrap
+    if "modulations" in visual:
+        for source, modulation in zip(sources, visual["modulations"]):
+            source["modulation"] = modulation
+    if "source_repeat_heads" in visual:
+        for source, repeat_head in zip(sources, visual["source_repeat_heads"]):
+            source["repeat_head"] = repeat_head
     if "source_start" in visual:
         for source in sources:
             source["start"] = visual["source_start"]
@@ -332,6 +345,8 @@ def parse_score(key: str, title: str, filename: str, clip_beats: int) -> dict:
         line = {"tracks": tracks, "source": source, "label": label}
         if "maps" in visual:
             line["map"] = visual["maps"][index]
+        if "line_modulations" in visual:
+            line["modulation"] = visual["line_modulations"][index]
         if "traversals" in visual:
             line["traversal"] = visual["traversals"][index]
         if "directions" in visual:
@@ -353,6 +368,8 @@ def parse_score(key: str, title: str, filename: str, clip_beats: int) -> dict:
             bass_line["map"] = visual["bass_map"]
         lines.append(bass_line)
     visual_output = {"sources": sources, "lines": lines}
+    if "performance" in visual:
+        visual_output["performance"] = visual["performance"]
     for setting in ("wrap", "meter", "row_beats", "pickup", "swing", "display_beats", "display_offset"):
         if setting in visual:
             visual_output[setting] = visual[setting]
