@@ -1,6 +1,69 @@
 const VOICE_COLORS = ["#f3a712", "#45a6e5", "#ef6351", "#49c889", "#a978d4", "#f4f0df"];
 let activePlayer = null;
 
+function initStarfield() {
+  const canvas = document.createElement("canvas");
+  canvas.className = "canon-starfield";
+  canvas.setAttribute("aria-hidden", "true");
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext("2d");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let width = 0;
+  let height = 0;
+  let stars = [];
+  let frame = 0;
+
+  const random = index => {
+    const value = Math.sin(index * 127.1 + 311.7) * 43758.5453;
+    return value - Math.floor(value);
+  };
+
+  const draw = () => {
+    frame = 0;
+    ctx.clearRect(0, 0, width, height);
+    const scroll = reducedMotion.matches ? 0 : window.scrollY;
+    for (const star of stars) {
+      const y = ((star.y - scroll * star.speed) % height + height) % height;
+      ctx.globalAlpha = star.alpha;
+      ctx.fillStyle = star.color;
+      ctx.beginPath();
+      ctx.arc(star.x, y, star.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  };
+
+  const resize = () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(width * ratio);
+    canvas.height = Math.floor(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const count = Math.max(48, Math.min(140, Math.round(width * height / 9000)));
+    const colors = ["#f4f0df", "#b8d9ef", "#f3cf83"];
+    stars = Array.from({ length: count }, (_, index) => ({
+      x: random(index * 5 + 1) * width,
+      y: random(index * 5 + 2) * height,
+      radius: .35 + random(index * 5 + 3) * .75,
+      alpha: .13 + random(index * 5 + 4) * .32,
+      speed: .035 + random(index * 5 + 5) * .05,
+      color: colors[index % colors.length]
+    }));
+    draw();
+  };
+
+  const requestDraw = () => {
+    if (!frame) frame = requestAnimationFrame(draw);
+  };
+  window.addEventListener("scroll", requestDraw, { passive: true });
+  window.addEventListener("resize", resize);
+  reducedMotion.addEventListener("change", requestDraw);
+  resize();
+}
+
+initStarfield();
+
 const audio = {
   context: null,
   ensure() {
