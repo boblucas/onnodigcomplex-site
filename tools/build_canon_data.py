@@ -40,8 +40,8 @@ VISUALS = {
     "fly": {"start": 1.0, "beats": 72.0, "wrap": 24.0, "meter": 3, "sources": [(1, "dux", "primary")], "lines": [([1], 0, "1"), ([0], 0, "2")], "maps": [{"scale": 1, "offset": 0}, {"scale": 1, "offset": -1}], "bass": [2]},
     "chromatic": {"beats": 38.0, "row_beats": [18.0, 20.0], "pickup": 2.0, "meter": 4, "sources": [(1, "dux", "primary")], "lines": [([1, 3, 6], 0, "1"), ([0, 2, 5], 0, "2")], "bass": [4, 7]},
     "autumn": {"beats": 98.0, "row_beats": [18.0, 16.0, 16.0, 16.0, 16.0, 16.0], "pickup": 2.0, "meter": 4, "swing": 0.6, "sources": [(0, "dux", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2")], "maps": [{"scale": 1, "offset": 0}, {"scale": 1, "offset": -1.5}], "bass": [2]},
-    "inversion": {"beats": 84.0, "wrap": 16.0, "meter": 4, "sources": [(2, "dux", "primary")], "lines": [([2, 4, 7, 0], 0, "1"), ([3, 5, 8, 1], 0, "2")], "bass": [6, 9, 10]},
-    "slowboat": {"beats": 32.0, "wrap": 16.0, "meter": 4, "sources": [(0, "dux", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2")], "bass": [2]},
+    "inversion": {"beats": 84.0, "wrap": 16.0, "meter": 4, "sources": [(2, "dux", "primary")], "lines": [([2, 4, 7, 0], 0, "1"), ([3, 5, 8, 1], 0, "2")], "transforms": [None, "inversion"], "bass": [6, 9, 10]},
+    "slowboat": {"beats": 32.0, "wrap": 16.0, "meter": 4, "sources": [(0, "dux", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2")], "transforms": [None, "inversion"], "bass": [2]},
     "retrograde": {"sources": [(1, "dux", "primary")], "lines": [([1], 0, "1"), ([0], 0, "2")], "bass": [2]},
     "table": {"start": 16.0, "beats": 64.0, "wrap": 16.0, "meter": 4, "split_source_bars": True, "sources": [(0, "vierkant", "primary")], "lines": [([0], 0, "1"), ([1], 0, "2"), ([2], 0, "3"), ([3], 0, "4")], "directions": ["right", "left", "down", "up"], "traversals": [
         {"bars": list(range(16)), "reverse": False},
@@ -54,10 +54,10 @@ VISUALS = {
     "double": {"beats": 70.0, "repeat_start": 4.0, "repeat_beats": 32.0, "repeat_count": 2, "repeat_tail": 2.0, "source_start": 4.0, "display_beats": 32.0, "display_offset": -4.0, "wrap": 16.0, "meter": 4, "sources": [(0, "dux A", "primary"), (3, "dux B", "primary")], "lines": [([1], 0, "A1"), ([0], 0, "A2"), ([2], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": -8, "modulo": 32}, {"scale": 1, "offset": -4, "modulo": 32}, {"scale": 1, "offset": -8, "modulo": 32}, {"scale": 1, "offset": -4, "modulo": 32}], "bass": []},
     "doublemod": {"sources": [(0, "dux A", "primary"), (2, "dux B", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3], 1, "B2")], "bass": []},
     "phasing": {"beats": 144.0, "meter": 4, "source_beats": [20.0, 28.0], "sources": [(0, "dux A · 5", "primary"), (2, "dux B · 7", "primary")], "lines": [([1], 0, "A1"), ([0], 0, "A2"), ([3], 1, "B1"), ([2], 1, "B2")], "maps": [{"scale": 1, "offset": -4, "modulo": 20}, {"scale": 1, "offset": 0, "modulo": 20}, {"scale": 1, "offset": -4, "modulo": 28}, {"scale": 1, "offset": 0, "modulo": 28}], "bass": []},
-    "vitam": {"meter": 4, "source_beats": [16.0], "sources": [(2, "dux · 4", "primary")], "lines": [([2, 3], 0, "1×"), ([0, 1], 0, "2×")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 0.5, "offset": 0, "modulo": 16}], "bass": [4, 5]},
+    "vitam": {"meter": 4, "source_beats": [16.0], "sources": [(2, "dux · 4", "primary")], "lines": [([2, 3], 0, "1×"), ([0, 1], 0, "2×")], "maps": [{"scale": 1, "offset": 0, "modulo": 16}, {"scale": 0.5, "offset": 0, "modulo": 16}], "transforms": [None, "inversion"], "bass": [4, 5]},
     "doublemod2": {"sources": [(0, "dux A", "primary"), (2, "dux B", "primary")], "lines": [([0], 0, "A1"), ([1], 0, "A2"), ([2], 1, "B1"), ([3, 4], 1, "B2")], "bass": []},
-    "multi": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "sources": [(0, "dux A · 6", "primary"), (1, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([2], 0, "A2"), ([1], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": -4, "modulo": 24}], "bass": []},
-    "grail": {"beats": 96.0, "meter": 4, "source_beats": [24.0], "sources": [(0, "dux · 6", "primary")], "lines": [([0], 0, "1×"), ([2, 4], 0, "2×"), ([1, 3], 0, "4×")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 0.25, "offset": 0, "modulo": 24}], "bass": []},
+    "multi": {"beats": 48.0, "meter": 4, "source_beats": [24.0, 24.0], "sources": [(0, "dux A · 6", "primary"), (1, "dux B · 6", "primary")], "lines": [([0], 0, "A1"), ([2], 0, "A2"), ([1], 1, "B1"), ([3], 1, "B2")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": -4, "modulo": 24}], "transforms": [None, "inversion", None, "inversion"], "bass": []},
+    "grail": {"beats": 96.0, "meter": 4, "source_beats": [24.0], "sources": [(0, "dux · 6", "primary")], "lines": [([0], 0, "1×"), ([2, 4], 0, "2×"), ([1, 3], 0, "4×")], "maps": [{"scale": 1, "offset": 0, "modulo": 24}, {"scale": 0.5, "offset": 0, "modulo": 24}, {"scale": 0.25, "offset": 0, "modulo": 24}], "transforms": [None, "inversion", None], "bass": []},
 }
 
 DURATIONS = {
@@ -317,6 +317,8 @@ def parse_score(key: str, title: str, filename: str, clip_beats: int) -> dict:
             line["traversal"] = visual["traversals"][index]
         if "directions" in visual:
             line["direction"] = visual["directions"][index]
+        if "transforms" in visual and visual["transforms"][index]:
+            line["transform"] = visual["transforms"][index]
         lines.append(line)
     if visual["bass"]:
         sources.append({"track": visual["bass"][0], "label": "vrije bas", "role": "bass"})
