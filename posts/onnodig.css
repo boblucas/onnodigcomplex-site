@@ -1,0 +1,326 @@
+/* onnodig complex — shared stylesheet. Edit here to re-theme the whole collection. */
+
+@font-face{font-family:Ubuntu;src:url(../Ubuntu/Ubuntu-Light.ttf)}
+@font-face{font-family:UbuntuMono;src:url(../Ubuntu_Mono/UbuntuMono-Regular.ttf)}
+:root{--bg:#111122;--fg:#ffffee;--mut:#9a9ab5;--rule:#2a2a40;--link:#fca311}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Ubuntu,'Segoe UI',system-ui,sans-serif;line-height:1.6}
+a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}
+.page{max-width:680px;margin:0 auto;padding:44px 20px 90px}
+.crumb{font-family:UbuntuMono,monospace;font-size:12px;color:var(--mut);letter-spacing:.06em;margin-bottom:26px}
+.crumb a{color:var(--mut)}
+h1.site{font-size:34px;margin:0 0 4px}
+.sub{color:var(--mut);font-family:UbuntuMono,monospace;font-size:13px;margin-bottom:30px}
+
+article{font-family:Ubuntu;font-weight:normal;font-size:20px;color:#ffe;background-color:#112;
+ padding:40px;text-align:center;max-width:600px;line-height:200%;margin:20px auto 0;
+ border:1px solid #2a2a40;border-radius:4px}
+article hr{color:#ffe}
+article h2{margin-top:0;font-size:40px}
+article blockquote{font-size:30px;margin:1em 0}
+article .author{text-align:right}
+article .author img{width:200px}
+.Y{color:#fca311}.R{color:#c13b2b}.B{color:#3498db}.G{color:#2ecc71}.P{color:#9b59b6}
+.abcrotate{mask-image:linear-gradient(to right,transparent,rgba(0,0,0,1.0),transparent);
+ -webkit-mask-image:linear-gradient(to right,transparent,rgba(0,0,0,1.0),transparent)}
+.abcrotate span{border-left:solid white;border-right:solid white}
+.numlabel{text-align:right;margin-top:-25px;margin-right:-10px;font-size:12px;float:right}
+
+.meta{font-family:UbuntuMono,monospace;font-size:12px;color:var(--mut);margin-bottom:2px}
+h1.post{font-size:28px;line-height:1.25;margin:.1em 0 .8em}
+.lbl{font-family:UbuntuMono,monospace;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.14em;margin:26px 0 8px}
+.c{border-left:2px solid var(--link);padding:2px 0 2px 14px;margin:10px 0;font-size:17px;color:#e6e6d8}
+.c blockquote{border-left:2px solid var(--rule);margin:.5em 0;padding-left:10px}
+.note{color:var(--mut);font-style:italic;font-size:15px}
+.nav{display:flex;justify-content:space-between;margin-top:40px;border-top:1px solid var(--rule);
+ padding-top:14px;font-family:UbuntuMono,monospace;font-size:13px}
+.embed-svg{width:100%;height:auto;display:block}
+.svgpost{max-width:540px;margin:1.3em auto;background:#0b0b16;border-radius:6px;overflow:hidden}
+
+.chapter{font-family:Ubuntu,'Segoe UI',system-ui,sans-serif;font-size:18px;line-height:1.7;
+ background:#111122;color:#ffffee;border:1px solid #2a2a40;border-radius:4px;padding:34px 40px;margin:20px 0}
+.chapter h2{font-size:32px;text-align:center;margin:0 0 .7em}
+.chapter h3.bk-h3{font-size:22px;margin:1.4em 0 .4em}
+.chapter p{margin:0 0 1em}.chapter em{font-style:italic}
+.chapter .poem{font-style:italic;margin:1.2em 0 1.2em 1.5em;font-size:19px;line-height:1.75}
+.chapter .wordsquare{font-family:UbuntuMono,monospace;text-align:center;font-size:25px;
+ line-height:1.4;letter-spacing:.42em;margin:1.1em 0}
+.chapter .wordsquare.bigram{letter-spacing:normal}
+.chapter .typing{font-family:UbuntuMono,monospace;font-size:14px;line-height:1.45;background:#0d0d1c;
+ border:1px solid #2a2a40;border-radius:4px;padding:12px 16px;overflow-x:auto;text-align:left;white-space:pre}
+.chapter .gw{display:inline-flex;flex-direction:column;align-items:center;vertical-align:bottom}
+.chapter .gw small{font-size:.58em;font-style:italic;line-height:1;margin-top:-.15em}
+.chapter figure.bookfig{margin:1.2em 0;text-align:center}
+.chapter figure.bookfig img{max-width:100%;border-radius:3px}
+.chapter figcaption{font-size:14px;font-style:italic;color:#b8b8c8;margin-top:.4em}
+.chapter .bk-note{color:#8a8aa0;font-style:italic;font-size:14px}
+.chapter .bk-list{text-align:left}
+.bk-R{color:#c0392b}.bk-G{color:#00d066}.bk-B{color:#009be2}.bk-Y{color:#ff9700}.bk-P{color:#a655bc}
+
+.hf{display:inline-block;text-align:center;margin:.5em 1.1em;vertical-align:top}
+.hf .en{color:#c13b2b;display:block;padding:0 .1em}
+.hf hr{border:none;border-top:1px solid #ffe;margin:2px 0}
+.hf .nl{color:#fca311;display:block}
+.hfrow{text-align:center;margin:1.1em 0}
+.hfbig{margin:1.1em 0;text-align:center}
+.hfbig .en{color:#c13b2b;border-bottom:1px solid #ffe;display:inline-block}
+.hfbig .nl{color:#fca311;display:block}
+.spg{margin:1.1em 0;text-align:center}
+.spg .lbl{font-family:UbuntuMono,monospace;font-size:12px;color:#8a8aa0;letter-spacing:.1em}
+.spg .s{font-size:22px}
+.spg .rot180{display:inline-block;transform:rotate(180deg)}
+.spg .rot90{display:inline-block;transform:rotate(90deg);transform-origin:center;margin:.6em 0}
+.acro b{font-weight:700}
+
+.sb-grid{display:grid;gap:5px;max-width:360px;margin:1.3em auto}
+.sb-tile{background:#e9dfb0;color:#2a2618;aspect-ratio:1;border-radius:4px;display:flex;
+ align-items:center;justify-content:center;position:relative;font-family:Georgia,'Times New Roman',serif;
+ font-weight:700;font-size:23px;box-shadow:inset -2px -2px 0 rgba(0,0,0,.14),inset 2px 2px 0 rgba(255,255,255,.35)}
+.sb-tile sub{position:absolute;right:4px;bottom:3px;font-size:9px;font-weight:600;line-height:1}
+.sb-empty{aspect-ratio:1}
+.sb-mini .sb-grid{max-width:156px;gap:2px;margin:0 auto}
+.sb-mini .sb-tile{font-size:11px;border-radius:2px;box-shadow:inset -1px -1px 0 rgba(0,0,0,.14)}
+.sb-mini .sb-tile sub{font-size:6px;right:2px;bottom:1px}
+
+.poempost{text-align:center;margin:1.7em auto;max-width:520px}
+.poemtitle{font-size:30px;margin-bottom:.6em;font-family:Ubuntu,'Segoe UI',system-ui,sans-serif}
+.poem{font-style:italic;font-size:21px;line-height:1.78}
+.poem .st{margin:0 0 1.15em}.poem .st:last-child{margin:0}
+.tile .art.poemart{padding:2px 0}
+.tile .art.poemart .poem{font-size:13.5px;line-height:1.62;font-style:italic;text-align:center}
+.tile .art.poemart .st{margin:0}
+
+/* ---- overview / tiles ---- */
+.tiles{column-width:250px;column-gap:16px;margin-top:20px}
+.tile{break-inside:avoid;display:block;background:#15152a;border:1px solid var(--rule);border-radius:7px;
+ padding:16px 16px 14px;margin:0 0 16px;color:var(--fg);text-decoration:none;overflow:hidden;transition:border-color .12s}
+.tile:hover{border-color:var(--link)}
+.tile .d{font-family:UbuntuMono,monospace;font-size:10.5px;letter-spacing:.05em;color:var(--mut);text-transform:uppercase;margin-bottom:9px}
+.tile .cap{font-size:16px;line-height:1.28;margin-top:12px}
+.tile .art{text-align:center;overflow-x:auto}
+.tile .art img{width:100%;border-radius:4px;display:block}
+.tile .art .wordsquare,.tile .art blockquote{font-family:UbuntuMono,monospace;font-size:12.5px;
+ line-height:1.42;letter-spacing:.1em;text-align:center;margin:0;border:none;padding:0;white-space:pre}
+.tile .art .wordsquare.bigram{letter-spacing:normal}
+.tile .art .poem{font-style:italic;font-size:12.5px;line-height:1.5;text-align:left;margin:0}
+.tile .art blockquote{white-space:normal}
+.tile .art blockquote p{margin:.2em 0}
+.tile .art.text{font-style:italic;font-size:14px;line-height:1.4;text-align:left;color:#e8e8dc}
+.tile .art.text p{margin:0}
+.tile .art.svgart{margin:-4px -4px 0;border-radius:5px;overflow:hidden;background:#0b0b16}
+.tile .art.svgart .embed-svg{width:100%;height:auto;display:block}
+.tile.plain .cap{font-size:18px;margin-top:0}
+/* artifact colours reused from posts + book */
+.seclist{margin-top:6px}
+.seclist a{display:block;padding:7px 0;border-top:1px solid var(--rule);color:var(--fg);text-decoration:none;font-size:16px}
+.seclist a:hover{color:var(--link)}
+.year{font-family:UbuntuMono,monospace;font-size:12px;color:var(--mut);letter-spacing:.16em;margin:38px 0 8px;text-transform:uppercase}
+
+/* ---- perfect-pangram tile: A..Z -> Jufs BMX ---- */
+.tile .art.pangram{font-family:UbuntuMono,monospace;text-align:center;padding:10px 2px}
+.tile .art.pangram .az{font-size:10px;letter-spacing:.18em;color:var(--mut);word-break:break-all}
+.tile .art.pangram .arr{color:var(--accent);font-size:13px;margin:5px 0}
+.tile .art.pangram .sent{font-size:15px;color:var(--fg);line-height:1.3}
+
+
+/* kerst square inside a page */
+.kwg{display:grid;grid-template-columns:repeat(5,42px);gap:4px;justify-content:center;margin:1.2em auto}
+.kwg .c{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:UbuntuMono,monospace;font-weight:700;font-size:22px;color:var(--orange);background:rgba(255,255,238,.06);border-radius:3px}
+
+/* scrabble record result */
+.tile .art.scrabrec{text-align:center;padding:16px 6px}
+.tile .art.scrabrec .score{font-family:UbuntuMono,monospace;font-weight:700;font-size:38px;color:var(--orange);line-height:.9}
+.tile .art.scrabrec .lbl{font-family:UbuntuMono,monospace;font-size:11px;color:var(--mut);letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.tile .art.scrabrec .word{font-family:UbuntuMono,monospace;font-weight:700;font-size:12px;letter-spacing:.1em;color:var(--fg)}
+
+
+
+/* result tiles (rebuilt clean) */
+.tile .art.lettersom{font-family:UbuntuMono,monospace;text-align:center;padding:14px 0;letter-spacing:.22em}
+.tile .art.lettersom .a{color:var(--fg);font-size:20px}.tile .art.lettersom .op{color:var(--accent);font-size:11px;letter-spacing:.12em;margin:5px 0}.tile .art.lettersom .b{color:var(--orange);font-size:20px}
+.tile .art.ennl{text-align:center;padding:14px 0;font-family:Ubuntu,'Segoe UI',sans-serif}
+.tile .art.ennl .src{color:var(--mut);font-size:13px;margin-bottom:7px;font-style:italic}
+.tile .art.ennl .en{color:var(--red);font-size:19px;line-height:1.1}.tile .art.ennl .nl{color:var(--orange);font-size:19px;border-top:1px solid var(--fg);display:inline-block;padding-top:2px;margin-top:1px}
+.tile .art.symm{text-align:center;padding:18px 0}
+.tile .art.symm .mirror{position:relative;font-family:UbuntuMono,monospace;font-weight:700;font-size:30px;letter-spacing:.05em;display:inline-block;background:linear-gradient(to bottom,var(--orange) 0 50%,var(--blue) 50% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.tile .art.symm .mirror::after{content:"";position:absolute;left:-9%;right:-9%;top:50%;height:1px;background:var(--fg)}
+/* 10x10 word square: plain letters, true square (self-contained) */
+.tile .art.sq10{padding:3px}
+.tile .art.sq10 .g10{display:grid;grid-template-columns:repeat(10,1fr);width:100%;aspect-ratio:1/1;gap:0}
+.tile .art.sq10 .g10>span{display:flex;align-items:center;justify-content:center;font:700 clamp(8px,2.4vw,12px)/1 UbuntuMono,monospace;color:var(--fg)}
+
+
+/* ---- Work overview: result plates ---- */
+:root{
+ --orange:#f3a712;--red:#ef6351;--blue:#45a6e5;--green:#49c889;--purple:#a978d4;
+ --plate:#0b0b14;--card:#161625;--paper:#f4f0df;
+}
+.page:has(.tiles){
+ max-width:1180px;padding:30px 28px 100px;
+}
+.page:has(.tiles) .back{
+ display:inline-flex;align-items:center;gap:8px;margin-bottom:64px;color:var(--mut);
+ font:12px/1 UbuntuMono,monospace;letter-spacing:.08em;text-transform:uppercase;
+}
+.page:has(.tiles) .back::before{content:"←";color:var(--link)}
+.page:has(.tiles) .back:hover{color:var(--fg);text-decoration:none}
+.page:has(.tiles) .kicker{
+ margin:0 0 12px;color:var(--link);font:12px/1 UbuntuMono,monospace;
+ letter-spacing:.16em;text-transform:uppercase;
+}
+.page:has(.tiles) h1.site{
+ max-width:700px;margin:0;font-size:76px;line-height:.84;font-weight:700;letter-spacing:0;
+ text-transform:lowercase;color:var(--fg);
+}
+.page:has(.tiles) .sub{margin:26px 0 0;text-transform:uppercase;letter-spacing:.12em}
+.page:has(.tiles) .intro{
+ max-width:540px;margin:18px 0 24px;color:#d7d7cb;font-size:20px;line-height:1.55;
+}
+.collection-meta{
+ display:flex;gap:24px;padding:14px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+ color:var(--mut);font:11px/1 UbuntuMono,monospace;letter-spacing:.1em;text-transform:uppercase;
+}
+.page:has(.tiles) .tiles{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 18px;
+ margin-top:48px;
+}
+.page:has(.tiles) .tile{
+ --art-accent:var(--orange);
+ display:flex;flex-direction:column;min-width:0;margin:0;padding:0 0 20px;
+ background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0;
+ color:var(--fg);overflow:visible;transition:transform .18s ease,border-color .18s ease;
+}
+.page:has(.tiles) .tile.vermilion{--art-accent:var(--red)}
+.page:has(.tiles) .tile.cobalt{--art-accent:var(--blue)}
+.page:has(.tiles) .tile.violet{--art-accent:var(--purple)}
+.page:has(.tiles) .tile.mint{--art-accent:var(--green)}
+.page:has(.tiles) .tile:hover{transform:translateY(-3px);border-color:var(--art-accent);text-decoration:none}
+.page:has(.tiles) .tile:focus-visible{outline:2px solid var(--art-accent);outline-offset:5px}
+.page:has(.tiles) .tile .d{
+ order:2;margin:13px 0 0;color:var(--art-accent);font-size:10px;letter-spacing:.08em;
+}
+.page:has(.tiles) .tile .cap{
+ order:3;margin:5px 0 0;font-size:19px;line-height:1.25;font-weight:500;
+}
+.page:has(.tiles) .tile .result-art{
+ order:1;position:relative;width:100%;aspect-ratio:4/3;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;overflow:hidden;padding:28px;
+ border:1px solid #272738;border-radius:6px;background-color:var(--plate);
+ background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+ background-size:24px 24px;color:var(--paper);
+}
+.result-art::before{
+ content:"";position:absolute;inset:13px;border:1px solid color-mix(in srgb,var(--art-accent) 24%,transparent);
+ pointer-events:none;
+}
+.result-art::after{
+ content:"";position:absolute;left:13px;top:13px;width:24px;height:3px;background:var(--art-accent);
+}
+.result-art .art-main{
+ position:relative;z-index:1;max-width:100%;color:var(--art-accent);
+ font:700 52px/1 UbuntuMono,monospace;letter-spacing:0;text-align:center;overflow-wrap:anywhere;
+}
+.result-art .art-detail{
+ position:relative;z-index:1;max-width:100%;margin-top:14px;color:var(--paper);
+ font:13px/1.45 UbuntuMono,monospace;letter-spacing:.04em;text-align:center;
+}
+.result-art .art-index{
+ position:absolute;z-index:2;right:20px;top:18px;color:#6f6f80;
+ font:10px/1 UbuntuMono,monospace;letter-spacing:.08em;
+}
+
+/* Each discipline gets its own diagram grammar inside the same plate. */
+.art-metric .art-main{font-size:66px}
+.art-metric .art-detail{text-transform:uppercase;letter-spacing:.14em}
+.art-grid{flex-direction:row!important;gap:24px!important;padding:24px!important}
+.art-grid .art-main{font-size:34px}
+.art-grid .art-detail{
+ margin:0;padding-left:22px;border-left:1px solid var(--art-accent);
+ font-size:10px;line-height:1.25;letter-spacing:.12em;text-align:left;white-space:nowrap;
+}
+.art-vowel{align-items:flex-start!important;justify-content:flex-end!important}
+.art-vowel .art-main{
+ position:absolute;left:22px;top:18px;font-size:144px;line-height:.75;color:color-mix(in srgb,var(--art-accent) 84%,white);
+}
+.art-vowel .art-detail{margin:0 0 4px 78px;text-align:left;font-family:Ubuntu,system-ui,sans-serif;font-style:italic}
+.art-repeat .art-main,.art-consonants .art-main,.art-acrostic .art-main{font-size:30px;letter-spacing:.08em}
+.art-repeat .art-main{padding:10px;border-top:2px solid var(--art-accent);border-bottom:2px solid var(--art-accent)}
+.art-music{
+ background-image:repeating-linear-gradient(to bottom,transparent 0 18px,rgba(244,240,223,.14) 18px 19px),
+ linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px)!important;
+ background-size:auto,24px 24px!important;
+}
+.art-music .art-main{
+ width:78px;height:78px;display:grid;place-items:center;border:2px solid var(--art-accent);
+ border-radius:50%;background:var(--plate);font-size:42px;
+}
+.art-music .art-detail{padding:4px 9px;background:var(--plate);text-transform:uppercase;letter-spacing:.12em}
+.art-alphabet .art-main{font-size:48px}
+.art-alphabet::after{width:calc(100% - 48px);height:4px;background:linear-gradient(90deg,var(--red) 0 20%,var(--orange) 20% 40%,var(--green) 40% 60%,var(--blue) 60% 80%,var(--purple) 80%);top:auto;bottom:22px;left:24px}
+.art-orbit .art-main{
+ width:130px;height:80px;display:grid;place-items:center;border:1px solid var(--art-accent);
+ border-radius:50%;font-size:54px;transform:rotate(-10deg);
+}
+.art-orbit .art-main::after{content:"";position:absolute;width:78px;height:126px;border:1px solid color-mix(in srgb,var(--art-accent) 55%,transparent);border-radius:50%;transform:rotate(42deg)}
+.art-cube .art-main{
+ width:112px;height:112px;display:grid;place-items:center;border:2px solid var(--art-accent);
+ transform:rotate(30deg) skew(-8deg);box-shadow:22px 14px 0 -2px var(--plate),22px 14px 0 0 color-mix(in srgb,var(--art-accent) 55%,transparent);
+}
+.art-cube .art-detail{margin-top:30px}
+.art-equation .art-main{font-size:38px}
+.art-equation .art-detail{font-size:18px;color:var(--art-accent)}
+.art-path{align-items:flex-start!important}
+.art-path .art-main,.art-path .art-detail{text-align:left}
+.art-path .art-main{font-size:30px;border-left:4px solid var(--art-accent);padding-left:14px}
+.art-path .art-detail{padding-left:18px}
+.art-translation .art-main{font-size:34px}
+.art-translation .art-detail{width:100%;padding-top:10px;border-top:1px solid var(--art-accent);font-size:15px}
+.art-mirror .art-main{font-size:34px}
+.art-mirror .art-detail{width:100%;margin-top:2px;padding-top:2px;border-top:1px solid var(--art-accent);font-size:28px;transform:scaleY(-1);color:color-mix(in srgb,var(--art-accent) 50%,transparent)}
+.art-count .art-main{font-size:58px}
+.art-hex .art-main{font-size:82px}
+.art-hex .art-detail{font-size:16px;line-height:1.25;letter-spacing:.22em}
+.art-loop .art-main{padding:20px;border:1px solid var(--art-accent);border-radius:50%;font-size:27px}
+.art-ratio .art-main{padding:18px;border:2px solid var(--art-accent);border-radius:50%;font-size:40px}
+.art-ratio .art-detail{text-transform:uppercase;letter-spacing:.12em}
+.art-stretto{align-items:flex-start!important}
+.art-stretto .art-main{font-size:30px}
+.art-stretto .art-detail{width:100%;word-spacing:-4px;text-align:left;color:var(--art-accent);opacity:.7}
+.art-necklace .art-main{
+ width:120px;height:120px;display:grid;place-items:center;border:10px dotted var(--art-accent);
+ border-radius:50%;font-size:34px;
+}
+.art-square .art-main{width:130px;height:130px;display:grid;place-items:center;border:2px solid var(--art-accent);font-size:31px}
+.art-landscape::before{
+ inset:30px;border:2px solid var(--art-accent);
+ clip-path:polygon(0 14%,18% 14%,18% 0,43% 0,43% 22%,70% 22%,70% 8%,100% 8%,100% 78%,82% 78%,82% 100%,50% 100%,50% 84%,20% 84%,20% 100%,0 100%);
+}
+.art-landscape .art-main{font-size:74px}
+.art-landscape .art-detail{text-transform:uppercase;letter-spacing:.14em}
+
+.page:has(.tiles) .year{
+ margin:74px 0 8px;padding-top:28px;border-top:1px solid var(--rule);color:var(--link);
+}
+.page:has(.tiles) .seclist{columns:3;column-gap:36px}
+.page:has(.tiles) .seclist a{break-inside:avoid;padding:9px 0;font-size:15px}
+.page:has(.tiles) .year:last-of-type{margin-top:54px}
+@media (max-width:900px){
+ .page:has(.tiles) .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .page:has(.tiles) h1.site{font-size:64px}
+ .page:has(.tiles) .seclist{columns:2}
+}
+@media (max-width:560px){
+ .page:has(.tiles){padding:24px 18px 72px}
+ .page:has(.tiles) .back{margin-bottom:44px}
+ .page:has(.tiles) h1.site{font-size:52px}
+ .page:has(.tiles) .intro{font-size:17px}
+ .collection-meta{gap:12px;justify-content:space-between;font-size:9px}
+ .page:has(.tiles) .tiles{grid-template-columns:1fr;gap:32px;margin-top:38px}
+ .page:has(.tiles) .tile .result-art{padding:24px}
+ .page:has(.tiles) .seclist{columns:1}
+}
+@media (prefers-reduced-motion:reduce){
+ .page:has(.tiles) .tile{transition:none}
+ .page:has(.tiles) .tile:hover{transform:none}
+}

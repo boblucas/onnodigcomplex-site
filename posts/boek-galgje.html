@@ -1,0 +1,53 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galgje &mdash; Onnodig ingewikkeld</title>
+<link rel="stylesheet" href="onnodig.css"></head><body><div class="page">
+<div class="crumb"><a href="index.html">&larr; onnodig complex</a> &middot; <span>Onnodig ingewikkeld (boek)</span></div>
+<div class="chapter"><h2>Galgje</h2><p>Mijn vriendin en ik spelen graag galgje. Het is namelijk een asymmetrisch spel, de rader heeft een compleet andere rol dan de bedenker. Eefje heeft een hekel aan uitgebreid puzzelen maar mij beethebben met een onraadbaar woord is zeer vermakelijk. En omgekeerd vindt ik het puzzelen fantastisch.</p>
+<p>Echter als we het normaal spelen is het eigenlijk te makkelijk en de moeilijkheidsgraad correct krijgen bleek nog wel een uitdaging.</p>
+<h3 class="bk-h3">Optimale strategie</h3>
+<p>Om te bepalen hoe moeilijk galgje eigenlijk is moeten we eerst over de oplosstrategie nadenken.</p>
+<p>Je denk misschien dat het optimaal spelen makkelijk is, gok gewoon de letters in volgorde van frequentie (natuurlijk wel voor de gegeven woordlengte). Maar naarmate je letters correct raadt gaat dit al niet meer op. Dan zou je eigenlijk de letter willen raden de het meest voorkomt in de nog mogelijke woorden.</p>
+<p>Maar ook dat klopt niet helemaal. Want stel je de situatie voor waarbij de mogelijke woorden voor m__in_ nog maling, marine, maning, mening of meting zijn. Dan komt de G het meest voor (4x). Maar eigenlijk is E (3x) hier het beste, omdat je met E beter de woorden kan onderscheiden op basis van <em>waar</em> de letter terecht komt!</p>
+<pre class="typing">5 fout:
+(marine) m__in_ g marine
+(maling) m__in_ g m__ing e m__ing l0 m_ling: MALING
+(maning) m__in_ g m__ing e m__ing l1 m__ing: MANING
+(mening) m__in_ g m__ing e me_ing n0 mening: MENING
+(meting) m__in_ g m__ing e me_ing n1 me_ing: METING
+
+4 fout:
+MarINe e0 MARINE
+MalINg e1 MalINg l0 MALING
+ManINg e1 ManINg l1 MANING
+MenINg e0 MEnINg n0 MENING
+MetINg e0 MEtINg n1 METING</pre>
+<p>Als je het echt goed doet denk je dus ook nog zorgvuldig helemaal tot het einde van het spel zodat je altijd handig uitkomt met het maken van partities zodat je het aantal foute gokjes minimaliseert. Dit is de daadwerkelijke optimale strategie als je verder niets weet over welk woord je tegenstander kiest. Hier voor 5-letterwoorden de statistiek precies uitgewerkt.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>[title=Valsspelen,reference=valsspelen]</p>
+<p>De bovenstaande strategiën gaan er wel vanuit dat Eefje het woord wat ze in haar hoofd heeft niet tijdens het spel veranderd. Dit is leuk omdat het op het eerste gezicht best lastig lijkt om te bedenken wat er allemaal nog past, en of er nog opties zijn als ik een letter raad die niet die letter gebruikt.</p>
+<p>Helaas is er wel een redelijke simpele omweg. Als je namelijk simpelweg bedenkt dat je met het woord &ldquo;_ier&rdquo; speelt dan liggen daarna al deze opties open: <em>vier, uier, mier, dier, zier, nier, kier, pier, sier, gier, hier, bier, fier, wier, lier, tier</em></p>
+<p>En je blijft nee zeggen totdat de beurten op zijn en kiest één van de nog overige letters. Nu is het ook zo dat dit soort woordgroepen sowieso de oorzaak zijn van een hoop verloren potjes. Dus ook als je eerlijk speelt is dit een goede strategie.</p>
+<p>Echter helpt het dus niet met het spelletje uitdagender maken, enkel onmogelijk.</p>
+<h3 class="bk-h3">Aantal beurten</h3>
+<p>Je zou kunnen proberen om de rader simpelweg minder beurten te geven. Dat maakt het spel natuurlijk lastiger. En er is nogal wat variatie mogelijk. Ik heb aan 100 mensen gevraagd hoe ze hun galg tekenen.</p>
+<p>Dit is de basis variant, 1:platform, 2: stok, 3: dwarsbalk, 4: touw, 5: hoofd, 6: romp 7: linkerarm 8: rechterarm, 9: linkerbeen, 10: rechterbeen. Sommige hebben de grond al voor de eerste beurt getekend, en sommige zelfs al de hele galg met touw.</p>
+<p>Er zijn bepaalde extra elementen die regelmatig worden toegevoegd, het meest voorkomend zijn de 3 diagonale verstevigingsbalken (die in het de hoge hoek het vaakst, zowel 1,2 als 3 stuks komt voor). En het gezicht. Maar ook de strop.</p>
+<p>Voor kinderen worden soms wel eens harkentenen en -vingers toegevoegd om meer beurten dan letters te krijgen, dan kun je prima tot 26 komen voor een gegarandeerde overwinning. Andere bijzondere toevoegingen zijn een bult voor de galg om op te staan, bolletjes voor handen en voeten, en een ronde buik met 3 knopen erin. En een strop (los van het touw).</p>
+<p><em>een voorbeeld van 17 delen met ronde romp en knopen</em></p>
+<p>Al met al gaat het aantal elementen in de galg vanaf 6 t/m 26. Maar voor de meeste mensen van 10 t/m 13. Het maximaal aantal fouten dat je mag maken is dus één minder dan het aantal elementen in de tekening.</p>
+<h3 class="bk-h3">Hoeveel beurten om hoeveel te raden?</h3>
+<p>Nu we een optimale strategie hebben en het duidelijk is dat elke hoeveelheid beurten te verdedigen is is het interessant om te kijken hoeveel woorden we met hoeveel fouten raden. Waarbij we eerst het aantal woorden minimaliseren die 10 fouten nodig hebben, daarbinnen 9 daarbinnen 8 enzovoorts. We proberen dus kosten wat het kost woorden van rechts naar links in deze grafiek te duwen.</p>
+<p class="bk-note">[grafiek uit het boek]</p>
+<p>Hier zijn dus 10 woorden die we simpelweg niet kunnen raden met een normale galg. In dit specifieke geval zijn dat sokken, mokken en jokken. Maar in het algemeen is het probleem zoals we het over hebben gehad tijdens het valsspelen. Een grote groep woorden die bijna identiek zijn. Dan ga je sommige missen.</p>
+<p>Je kunt dus zien dat de overgrote meerderheid van de woorden met maar een paar beurten zou moeten kunnen raden. Maar een paar kun je nooit. Al kun je kiezen welke dat zijn. Dit maakt dat het best oninteressant is om het aantal beurten in te perken.</p>
+<p>[title=Meer woorden,reference=meer-woorden]</p>
+<p>In principe zou je zeggen dat het aantal woorden ook vast staat, maar naast simpelweg meer vreemde en moeilijke woorden toe te voegen aan de opties kun je ook bijvoorbeeld alle woorden uit het Engels toevoegen. Je kunt zien dat het plotje van hierboven dan wel iets naar rechts verschuift. Maar van 400 naar 800 woorden blijft de vorm ongeveer hetzelfde.</p>
+<p class="bk-note">[grafiek uit het boek]</p>
+<p>Laten we het uitdrukken als een percentage van het totale aantal woorden, dan kunnen we de vorm beter vergelijken. En dan zien we dat de staart misschien iets langer wordt, maar het spel eigenlijk nauwelijks veranderd</p>
+<p class="bk-note">[grafiek uit het boek]</p>
+<p>[title=Variaties,reference=variaties]</p>
+<p>Om het moeilijker te maken is het aantal beurten of het aantal woorden dus niet heel goed gereedschap, het heeft bijna geen effect, en dan plots kun je niets meer raden. Maar het alfabet groter maken is zeer effectief! Je denkt misschien dat dat niet echt een optie is maar een manier om dit te bewerkstelligen is om bij elke keer raden maar maximaal één letter te geven, elke dubbele letter moet je dus tweemaal voor raden.</p>
+<p>Je kunt hier zien dat het meer is uitgespreid dan normaal galgje, zeker bij optimaal (of goed) spel, en daardoor is het een stuk spannender en dynamischer spel!</p>
+<p class="bk-note">[grafiek uit het boek]</p></div>
+</div></body></html>

@@ -1,0 +1,285 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bob Lucassen</title>
+<style>
+  /* onnodigcomplex palette — shared across the whole site */
+  :root {
+    --bg: #111122;
+    --ink: #ffffee;
+    --muted: #9a9ab5;
+    --rule: #2a2a40;
+    --accent: #fca311;
+    --accent-weak: rgba(252, 163, 17, 0.13);
+    --frame: #1b1b2e;
+
+    /* the five post primaries, available site-wide */
+    --red: #c13b2b; --orange: #fca311; --blue: #3498db; --green: #2ecc71; --purple: #9b59b6;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --mono: "SF Mono", "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+
+    --measure: 38rem;
+    --step-0: 1.125rem;
+    --step-1: 1.34rem;
+    --step-2: 1.75rem;
+    --step-3: clamp(2.4rem, 7vw, 3.4rem);
+  }
+  .R { color: var(--red); } .Y { color: var(--orange); } .B { color: var(--blue); }
+  .G { color: var(--green); } .P { color: var(--purple); }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: var(--step-0);
+    line-height: 1.62;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: clamp(2.2rem, 6vw, 4.5rem) 1.4rem 5rem;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 1.12em;
+    transition: background-size .15s ease;
+  }
+  a:hover { background-size: 100% 2px; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+    background-image: none;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 .9rem;
+  }
+
+  /* ---- masthead ---- */
+  header { margin-bottom: 2.6rem; }
+  .topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: .8rem;
+    margin-bottom: 2rem;
+  }
+  .topline .mark { color: var(--accent); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: var(--step-3);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin: 0 0 .5rem;
+    text-wrap: balance;
+  }
+  .role {
+    font-family: var(--mono);
+    font-size: .78rem;
+    letter-spacing: .04em;
+    color: var(--muted);
+    margin: 0;
+  }
+  .role b { color: var(--ink); font-weight: 500; }
+
+  /* ---- lead / intro ---- */
+  .lead p { margin: 0 0 1.15rem; }
+  .lead p:first-of-type { font-size: var(--step-1); line-height: 1.5; }
+  .dropcap::first-letter {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 3.1em;
+    line-height: .82;
+    float: left;
+    padding: .06em .12em .0 0;
+  }
+
+  section { margin-top: 3.4rem; }
+  section > h2 {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin: 0 0 1.3rem;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .prose p { margin: 0 0 1.15rem; }
+  .prose p:last-child { margin-bottom: 0; }
+  em { font-style: italic; }
+  .say-hello { color: var(--accent); font-style: italic; }
+
+  /* ---- elsewhere: web of links ---- */
+  .links {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .1rem 1.4rem;
+    font-family: var(--mono);
+    font-size: .84rem;
+    line-height: 1.9;
+  }
+  .links dt { color: var(--muted); letter-spacing: .02em; }
+  .links dd { margin: 0; }
+
+  /* ---- snapshots (placeholders where photos go) ---- */
+  .snaps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .8rem;
+  }
+  @media (max-width: 34rem) { .snaps { grid-template-columns: repeat(2, 1fr); } }
+  figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .frame {
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--rule);
+    background:
+      repeating-linear-gradient(-45deg, transparent 0 9px, var(--frame) 9px 10px),
+      var(--bg);
+    display: grid;
+    place-items: center;
+  }
+  .frame span {
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  figcaption {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--muted);
+    letter-spacing: .02em;
+  }
+
+  .note {
+    margin-top: .9rem;
+    font-family: var(--mono);
+    font-size: .74rem;
+    color: var(--muted);
+    letter-spacing: .01em;
+  }
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-weak);
+    padding: .12em .5em;
+    border-radius: 2px;
+  }
+
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .03em;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .6rem;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <span><span class="mark">onnodigcomplex</span> &middot; Arnhem, NL</span>
+      <span>EN&nbsp;&middot;&nbsp;NL</span>
+    </div>
+    <h1>Bob Lucassen</h1>
+    <p class="role">I play piano, make word puzzles, and program.</p>
+  </header>
+
+  <div class="lead">
+    <p class="dropcap">I make things out of language, music, math and code. Puzzles, poems, programs, canons, word lists, proofs. Most of it never left my computer.</p>
+    <p>It was scattered over MuseScore, an old blog, GitHub, Reddit and my mail. This site collects it in one place that I own. No timeline, just links between things. Dates don't matter much here.</p>
+    <p>Most of the work is compact and I don't like writing long explanations. If you have questions, ask the assistant. Or me.</p>
+  </div>
+
+  <section>
+    <h2>About</h2>
+    <div class="prose">
+      <p>I'm from Arnhem. Self-taught, no degree. I did the first year of computer science at Radboud at sixteen, without a high school diploma, and wasn't allowed to continue without one. I went to a democratic school. Later I taught programming, games and music at schools like that.</p>
+      <p>I started at sixteen at MediaMonks. Then Nintendo&nbsp;DS games in C++ at Engine Software, AR at Lukkien, and five years at <b>Esdec</b> building the browser CAD tools that solar installers still use daily. Since 2021 I'm at <b>Alliander</b>, the grid operator, where I lead a small AI research team. The first grid foundation model I trained at home on my own 4090. Now it forecasts the medium-voltage grid in production, on rather more GPUs. Open source as <em>s4casting</em>, paper at CIRED&nbsp;2025.</p>
+      <p>In 2020 I built <b>Gigacorpus</b>, a 234&nbsp;GB Dutch text corpus, still the largest open one. It helped turn Mistral&nbsp;7B into <em>GEITje</em>, the open Dutch language model. BREIN's lawyers took down the corpus, and later the model. Good story, ask me sometime.</p>
+      <p>The rest of this site is the useless half, which is my favorite half: canons from constraint solvers, the largest known word square, the only Dutch reflexicon, byte-level models that write palindromes or invent Dutch words, poems in one vowel, an algorithm for generating unlabelled necklaces that two papers had left open. 96/100 on the AIVD kerstpuzzel. I post this kind of thing as <em>onnodigcomplex</em>. Unnecessarily complicated. That's about right.</p>
+      <p>I'm figuring out what's next. If you have something interesting: <span class="say-hello">mail me</span>.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The work, elsewhere</h2>
+    <dl class="links">
+      <dt>music</dt><dd><a href="#">MuseScore</a></dd>
+      <dt>code</dt><dd><a href="#">GitHub &middot; /boblucas</a></dd>
+      <dt>language play</dt><dd><a href="posts/">onnodig complex &middot; alle taligheden</a> &middot; <a href="https://www.reddit.com/user/onnodigcomplex/submitted/">reddit</a></dd>
+      <dt>grid AI</dt><dd><a href="#">s4casting</a> &middot; <a href="#">CIRED 2025 paper</a></dd>
+      <dt>the old blog</dt><dd><a href="#">unnecessarilycomplicated</a></dd>
+      <dt>the book</dt><dd><a href="#">on Dutch recreational language <span class="tag">in progress</span></a></dd>
+      <dt>elsewhere</dt><dd><a href="#">LinkedIn</a> &middot; <a href="#">Curriculum vitae (PDF)</a></dd>
+    </dl>
+    <p class="note">Pages are in English or Dutch depending on the source; Dutch ones carry a &ldquo;read in English&rdquo; button.</p>
+  </section>
+
+  <section>
+    <h2>Off the clock</h2>
+    <div class="prose">
+      <p>Eefje, the rabbits, a horse, a house by the river we're renovating, some furniture I built, a computer I'm proud of, and a piano.</p>
+    </div>
+    <div class="snaps" style="margin-top:1.5rem">
+      <figure><div class="frame"><span>photo</span></div><figcaption>Eefje &amp; me</figcaption></figure>
+      <figure><div class="frame"><span>photo</span></div><figcaption>the rabbits</figcaption></figure>
+      <figure><div class="frame"><span>photo</span></div><figcaption>the house</figcaption></figure>
+      <figure><div class="frame"><span>photo</span></div><figcaption>a canon, engraved</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Get in touch</h2>
+    <div class="prose">
+      <p>Mail: <a href="mailto:bat.lucassen@gmail.com">bat.lucassen@gmail.com</a>. Or <span class="tag">ask the site anything</span> once that's wired up, and an assistant answers from everything here.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built in the open &middot; no trackers</span>
+    <span>Evergreen, dates optional</span>
+  </footer>
+</div>

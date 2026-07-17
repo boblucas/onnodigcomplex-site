@@ -1,0 +1,72 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Versleuteling &mdash; Onnodig ingewikkeld</title>
+<link rel="stylesheet" href="onnodig.css"></head><body><div class="page">
+<div class="crumb"><a href="index.html">&larr; onnodig complex</a> &middot; <span>Onnodig ingewikkeld (boek)</span></div>
+<div class="chapter"><h2>Versleuteling</h2><p>Al duizenden jaren hebben mensen baat bij iets op kunnen schrijven wat niet iedereen zomaar kan lezen. Zoals onontcijferbare hiërogliefen op tombes uit het oude egypte. Of het advies in de Kama Sutra om in codetaal te kunnen schrijven met je geliefde. Persoonlijk doe ik dat doormiddel van m'n handschrift maar het kan systematischer. De simpleste manier van versleuteling is een substitutiecijfer, vervang elke letter in het alfabet door een andere letter uit het alfabet (of zelfs een heel ander symbool). Een goede puzzelaar kan zo'n code nog wel kraken, maar het is lastiger dan je denkt, zeker zonder wikipedia bij de hand te hebben in het jaar 50 voor Christus.</p>
+<p>Caesar gebruikte namelijk een variant van deze methode voor zijn miltair berichtenverkeer. Vervang elke letter met een letter een aantal stappen verderop in het alfabet (de letters aan het einde beginnen weer bij het begin). We kunnen bijvoorbeeld (net als Caesar) het alfabet 3 stukjes opschuiven.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Zo wordt &lsquo;IKLUSTWELEENSALADEMETKIP&rsquo;, &lsquo;MOPYWXAIPIIRWEPEHIQIXOMT&rsquo;. Complete onzin, maar als je weet dat de rotatie 3 was kun je het zo weer terug vertalen.</p>
+<p>Zou het niet nog beter zijn als de versleutelde tekst toevallig een andere tekst wordt. Dan zal de berichtonderschepper wel denken, ah dit is alleen een heel vies gerecht voor stoof. En ons geeft het wellicht de mogelijkheid om een bijzonder gedichtje te kunnen schrijven. Met het Caesercijfer lukt dat wel met enkele woordjes zoals:</p>
+<p>[1] [width=1.5em,height=2em] #1 [1] [width=1.5em,height=2em] #1 [blackF][s=0.40] [blackE][s=0.50] [blackD][s=0.60] [blackC][s=0.75] [blackB][s=0.85] [blackA][s=0.90] 18mm [frame=off,strut=yes,offset=-23mm]</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>23mm</p>
+<p>23mm [frame=off,strut=yes,offset=-23mm]</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>23mm</p>
+<p>Deze twee waren al flink puzzelen, een hele zin die ergens op slaat is ver buiten het bereik van redelijkheid helaas. Voor we verder gaan zal ik mijn beste woordpaar per alfabetrotatie nog delen. Een troostprijs.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>% ook nog mono-alfa? In de verteller van Mulisch wordt de vraag gesteld of een mono-alfabeet NL > NL kan doen. % en T9?</p>
+<h3 class="bk-h3">Vigenère</h3>
+<p>Naast dat we er maar moeilijk mee kunnen spelen is het Caesarcijfer ook niet een bijzonder moeilijk cijfer om te kraken. Als je de methode kent is zelfs het naief uitproberen van vijfentwintig alfabetrotaties zoveel moeite niet. Je zou kunnen zeggen dat de mate rotatie eigenlijk je wachtwoord is, en maar zesentwintig mogelijke wachtwoorden volstaat niet. Dus om de codekraker te slim af te zijn zijn mensen sommetjes gaan maken met tekst. Je hebt je klare tekst (het bericht te versleutelen), je wachtwoord, en je cijfertekst. Door het wachtwoord bij het bericht op te tellen krijg je de cijfertekst. Het is eigenlijk simpel genoeg, geef elke letter een nummer, en je kunt berichten optellen.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Dus stel we willen het geheim bericht <em>VALMORGENAAN</em> versturen en we hebben het wachtwoord <em>PIZZA</em> afgesproken sturen we <em>KIKLOGODMAPV</em>. Kijk maar:</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Het sommeren ziet er misschien gek uit, 21+15 = 10? Maar je begint na 26 letters gewoon weer opnieuw bij A met tellen en dan komen we uit bij letter tien: 36 - 26 = 10. Gegeven dat je de cijfertekst en het wachtwoord hebt kun je als ontvanger weer terugrekenen wat de klare tekst was.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Dit noemen we het Vigenèrecijfer. Het is één van de klassieke methoden voor encryptie, voor het eerst beschreven in 1553. Deze methode van versleuteling kan inmiddels wel gebroken worden, maar heeft zich tot ten minste 1863 dapper verzet en verdiende daarom de titel &lsquo;de onbreekbare versleuteling&rsquo;. Sterker nog, als je voor het wachtwoord een willekeurige letterbrei kiest die net zo lang is als je tekst dan is het nog steeds een onbreekbaar cijfer. Dit noemen we een eenmalig blokcijfer welke misschien onhandig maar wel letterlijk onbreekbaar is en zodoende tot in de koude oorlog is gebruikt.</p>
+<p>Terug naar ons doel dan. Kunnen we hiermee versleutelen naar een toevallig zinnige tekst. Het antwoord voor enkele woordjes is ja! Heel veel zelfs, bijvoorbeeld:</p>
+<p><em>Het gebeurt blijkbaar alleen als ík</em></p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Nog niet echt een mooi gedicht helaas. Het langste wat ik kan zonder betekenis in acht te nemen is.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Je kunt natuurlijk wel meerdere woordjes aan elkaar proberen te plakken maar de vrijheidsbeperking blijkt enorm. Harstikke leuk dat <em>aandelenkoersindex + aft-beiaard-avaleren = af-geiten-bremstruik</em> is. Maar dat neem je niet op in je bundel</p>
+<p>Als ik mezelf enige afleiding toe sta valt het wel meteen op dat je kan proberen om nog een stapje encryptie te doen. <em>Aanbied + nooddak = nobelen</em>, maar wat is <em>nooddak + nobelen</em>? Het onleesbare <em>acphoex'</em> helaas. Gelukkig zijn er een paar uitverkoren setjes die een extra stap toe laten, zoals hieronder. Helaas volgt hierop weer cwimx. Het lijkt me duidelijk dat we de langste reeks willen vinden.</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>4 woorden: autologisch dut-waag-hemd dom-klomp-wok gif-glos-waan 5 woorden: imps cola kaas mols wolk 6 woorden: aub jas jut sul boe tip 7 woorden: bit vws wel rad neo eer rif (vws = ministerie voor volksgezondheid welzijn en sport) Hierna houdt het toch echt op, terwijl ik zo had gehoopt op een reeks die zichzelf herhaald. Waarom zouden we die niet kunnen vinden?</p>
+<h3 class="bk-h3">Periodiek</h3>
+<p>Als we even alleen naar de waardes achter de letters kijken (2 in plaats van 'c', en t = 20) en maar één letter volgen door alle iteraties heen. Neem het geheime woord 'appel' en het wachtwoord 'boven'. De eerste twee letters hebben waardes 0(a) en 1(b), en deze maken samen 1(b). De eerste letter van het volgende woord wordt 1+1=c(2) en daarna 2+1=3(d) etc. De reeks die hier uit volgt zal vele bekend voorkomen, het is namelijk de Fibonacci reeks. In dit geval mag een getal alleen nooit boven de 25 uitkomen, dus op een circulaire nummerlijn.</p>
+<p>Na 84 stappen zal deze reeks zich herhalen (we komen weer uit bij 0 en 1). Het is logisch dat dit uiteindelijk gebeurd omdat er maar 26² mogelijke paren van 2 getallen zijn, maar het hoeft niet altijd 84 stappen te kosten. Als we als voorbeeld namelijk appel en naald hadden gekozen (a=0, n=13) dan waren we veel sneller klaar geweest: 0+13=13, 13+13=26=0, etc. Hieronder zie je alle periodes (hoe lang het duurt voor we terug zijn bij af) die zich voordoen als we alle beginwaardes proberen. Elke opeenvolging van 2 waardes is hier te vinden:</p>
+<p class="bk-note">[tabel uit het boek]</p>
+<p>Dit laat direct zien waarom een herhalende reeks vinden zo lastig is. Bijna alle letter opeenvolgingen zitten in periodes van 84 lang, en dat gaat natuurlijk nooit lukken - het duurt te lang voor we weer thuis zijn. Laten we het onzelfs eerst eens toestaan om de letters van het alfabet op een andere volgorde te zetten (of welke waardes we aan welke letters toewijzen, maar net hoe je het wil zien). Kunnen we dan een zichzelf herhalende rij maken?</p>
+<p>Allereerst kunnen we gebruik maken van de periode van 1 lang door v=0 te maken in het alfabet, dan zijn we er al met een beetje hulp van een zeker toeristenkantoor: <em>vvv+vvv= vvv vvv vvv vvv&hellip;</em> Die van 3 kan ook prima, laten we v=0 en d=13 maken zodat d+d=v wordt: _vvv dvd dvd vvv dvd dvd vvv_ Die van 28 wordt al zeer lastig maar het alfabet <em>acdepxriljtonqksgubvmwhyfz</em> past hier en geeft:</p>
+<p><em>tab + kam = fan nar tab haf rag dak lap tab bah dak mat haf gal nar dak kam gal pad mat fan bah gal lap fan rag pad tab kam .....</em></p>
+<p>De a hier met een periode 1 in het midden laten is natuurlijk wel erg handig voor ons, maar niet zo mooi. Het is het leukst als de periode van elke positie (eerste, tweede en derde letter) in ieder geval langer is dan 1. Om zo'n oplossing te realiseren moeten we ook de lengte van het alfabet veranderen, een x of q kunnen we toch wel missen. Hierdoor krijgen we namelijk compleet andere periodes - met een alfabet van 22 tekens hebben we bijvoorbeeld een langste periode van maar 30! De maximale periode van een bepaalde alfabetlengte is altijd degene die begint met 0 1, een normale Fibonacci reeks op een circulaire getallenlijn. De lengtes van deze reeks voor iedere "alfabetgrootte" wordt de Pisano reeks genoemd:</p>
+<p>(n) = 1, 3, 8, 6, 20, 24, 16, 12, 24, 60, 10, 24, 28, 48, 40, 24, 36, 24, 18, 60, 16, 30, 48, 24, 100, <strong>84</strong>, 72, 48, 14, 120, 30, 48, 40, 36, 80, 24, 76, 18, 56</p>
+<p>Dus kandidaten voor alternative alfabetgroottes zijn (24) = 24 en (29) = 14. Een alfabet van 24 letters, met een maximale periode van 24 levert in precies de juiste volgorde een prachtige reeks op:</p>
+<p><em>pmkhfnaqgeruivtbjwdslocx: pek + hok = haf aha eer bij pok bed bal abt oor hip per hor hal aha eek big por bed baf abc ook hip pek hok &hellip;</em></p>
+<p>Het vinden van deze reeks bleek nog een aardige uitdaging, bedenk je maar hoeveel alfabetten er zijn van verschillende lengtes en hoeveel woordcombinaties er te proberen zijn</p>
+<h3 class="bk-h3">Betekenis</h3>
+<p>De ultieme toepassing van dit soort esoterie is natuurlijk het kunnen maken van een gedichtje. Dat wil zeggen dat regel a + regel b = regel c. Met enige betekenis. Dit bleek echter ontzettend lastig. Wat betreft het gewone alfabet heb ik dit al heel snel opgegeven. Het abc heeft simpelweg niet genoeg woordsetjes om iets zinnigs mee te kunnen zeggen.</p>
+<p>Het beste alfabet ontdekken, waarmee een gedicht misschien wel kan slagen, is nog een heuze uitdaging. Gelukkig hoeven we niet per se het beste alfabet te vinden, en is 'heel goed' misschien goed genoeg. Zo'n alfabet kunnen we vinden met statistische methodes (ook wel genetische algoritmes). Resultaat is het schitterende alfabet ewdbkfnopxvjraizgytulhsqmc. Waar het abc slechts 5649 woordsetjes oplevert die samen weer een woord vormen, zijn dat er voor het ewd maarliefst 70567. Het opent daarmee de deur naar iets betekenisvols.</p>
+<p>[n=2]</p>
+<div class="poem">Pensioenpolitiek<br>
+ dekkingsgraden<br>
+ verstrekkingen? het<br>
+ regent geleuter.<br>
+<br></div>
+<div class="poem">Consumenten<br>
+ we zitten<br>
+ we zeuren<br>
+ de kijker<br>
+<br></div>
+<p>En een poging om een vorm te hebben, nog 2 haikus: [n=2]</p>
+<div class="poem"> een wintervogel.<br>
+ timbre gepieker. als<br>
+ tikken pelmolen.<br>
+<br></div>
+<div class="poem"> een algoritme<br>
+ gereed. zotheid, een<br>
+ getaltsunami.<br>
+<br></div></div>
+</div></body></html>

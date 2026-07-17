@@ -1,0 +1,28 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Letterwisselspel &mdash; Onnodig ingewikkeld</title>
+<link rel="stylesheet" href="onnodig.css"></head><body><div class="page">
+<div class="crumb"><a href="index.html">&larr; onnodig complex</a> &middot; <span>Onnodig ingewikkeld (boek)</span></div>
+<div class="chapter"><h2>Letterwisselspel</h2><p>Een taalspelletje uitgevonden door Lewis Carroll verdient natuurlijk de aandacht. In de basis is het spel simpel. Neem twee woorden van gelijke lengte en kijk of je van de één naar de ander kan komen door steeds maar één letter te veranderen. Na elke verandering moet je nog steeds een valide woord hebben.</p>
+<p>Zo kun van <em>hier</em> naar <em>daar</em> komen op de volgende manier</p>
+<div class="wordsquare">HIER<br>SIER<br>STER<br>STAR<br>STAM<br>STAK<br>SNAK<br>SNAP<br>KNAP<br>KAAP<br>KAAS<br>DAAS<br>DAAR</div>
+<p>Langere woorden zijn moeilijker</p>
+<div class="wordsquare">PEUZELEN<br>BEUZELEN<br>BEUGELEN<br>BENGELEN<br>MENGELEN<br>MERGELEN<br>VERGELEN<br>VERGEVEN<br>VERWEVEN<br>VERWEREN<br>VERTEREN</div>
+<p>Het doel is over het algemeen om het in zo'n klein mogelijk aantal stappen te doen. Als je dit aan het oplossen bent maak je een soort van boom van mogelijke woorden. Elk woord is zo verbonden met een aantal andere woorden waarin het kan veranderen. Als we tussen alle woorden die maar één letter verschillen een lijntje zetten krijgen we een graaf. Hier is hoe dat process er uit ziet.</p>
+<figure class="bookfig"><img src="../book-img/example_letterspel_graph.png" alt=""></figure>
+<p>We kunnen alle woorden van gelijke lengte in een gigantische graaf zetten. Dan zullen we eilandjes vinden van onderling bereikbare woorden. Ieder eilandje heet een component. Als je dus twee woorden hebt die bij een andere eiland horen, kun je nooit van de één naar de ander.</p>
+<p>De meeste woorden, vooral als ze lang zijn, hebben helemaal geen verbindingen en zitten in hun eentje op hun eigen eiland. Dit betekend dat 85% helemaal niet mee doet. Dit is mede de reden dat lange woorden zoveel moeilijker zijn, grote kans dat je een begin of eindwoord kiest wat effectief een eiland is. Omgekeerd zijn de eilanden van korte woorden spinnewebben met als record houder <em>bok</em>, een woord met dertig verbindingen!</p>
+<p><em>dok, fok, gok, hok, jok, kok, lok, mok, nok, ook, pok, rok, sok, tok, wok, bol, bak, bek, bik, boa, bod, boe, bof, bog, bom, bon, bos, bot, box of boy</em></p>
+<p>Misschien een beetje een afleiding, maar wat is het langste pad wat we kunnen maken? Een pad zal zich altijd volledig op één component moeten bevinden. En je kunt bijna alle woorden binnen zo'n component bezoeken in één tour, zelfs als je geen dubbele toelaat. Er zijn componenten in alle soorten en maten maar er zijn 3 duidelijk grootste. 1356 onderling verbonden 5-letterwoorden waaronder koest en draai. 1665 onderling verbonden 6-letterwoorden waaronder wettig en pompen. En maarliesft 1755 onderling verbonden 4-letterwoorden waaronder hond en kauw.</p>
+<p>Het langst mogelijk pad is dus meer dan 1500 woorden lang (beetje afhankelijk van je woordenboek). Watt, want, wang, zang, &hellip; nog 1500 4 letter woorden &hellip;, logo</p>
+<p>Maar de hoofdvraag is dus eigenlijk: Welke twee woorden woorden vereisen het langste pad als je de kortste route neemt? Dit zijn wellicht goede woorden als je iemand een puzzel wilt geven. Voor iedere woordenlengte zijn dit de reeksen.</p>
+<p>20: aria alia alfa asfa asla aula aura jura jurk junk dunk donk doek soek stek sten eten even oven omen amen 37: trust frust fruit fluit sluit stuit stuip stulp stolp stoep stoer stier slier klier kuier luier luien buien buten baten bazen bazin bazig bezig benig menig menie manie malie talie taaie laaie larie larve garve garde aarde aards 23: dromer droger drager dragen dralen kralen kraken kwaken kweken kieken kiezen kiezel miezel moezel boezel boemel bommel bombel bobbel bobben jobben jobber robber rubber 41: kluiver kluiven kluizen sluizen sluiten stuiten stutten statten spatten spitten spijten slijten slijpen slippen stippen stoppen stoepen snoepen snoeren snieren slieren klieren kuieren kuberen puberen pureren pareren paneren poneren doneren doteren boteren beteren begeren regeren regelen zegelen zemelen hemelen hevelen bevelen bedelen 13: verrader verlader verladen verlagen vervagen vervalen vervelen vergelen mergelen mengelen bengelen beugelen beuzelen neuzelen</p>
+<p>De perfecte oplossing is er één waarbij je elke letter verandered, één voor één, op volgorde. Hoe langer het woord, hoe onwaarschijnlijker dat wordt.</p>
+<div class="wordsquare">STROMAT<br>STROMAN<br>STROMEN<br>STROPEN<br>STREPEN<br>STOEPEN<br>SLOEPEN<br>FLOEPEN</div>
+<p>En ik kan misschien één langer met 8-letter woorden:</p>
+<div class="wordsquare">GONDELEN<br>VONDELEN<br>VENDELEN<br>VERDELEN<br>VERVELEN<br>VERVALEN<br>VERVAGEN</div>
+<p><em>Gondelen is varen met en gondel (in Venetië), en vondelen is lopen over een vondel, of wellicht het te vondel leggen van baby. Die laatste is redelijk creatief. Vendel is synoniem met vaandel.</em></p>
+<p>Mocht je je nog afvragen of er iets zinnigs gezegd kan worden in deze vorm</p>
+<p><em>Poets koets, klets klats, Klaas klaar!</em></p>
+<div class="wordsquare">MEDIËRENDE<br>MEDIËREND<br>MEDIËREN<br>MEIËREN<br>MIEREN<br>MEREN<br>MEEN<br>MEE<br>ME<br>MEN<br>OMEN<br>ROMEN<br>ROEMEN<br>ROEMEEN<br>ROEMEENS<br>ROEMEENSE<br>ROEMEENSER</div></div>
+</div></body></html>
