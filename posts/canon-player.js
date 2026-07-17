@@ -32,12 +32,7 @@ class CanonPlayer {
     this.nodes = [];
     this.lines = score.visual.lines;
     this.sources = score.visual.sources.map(source => {
-      const sourceStart = source.start || 0;
-      const sourceBeats = source.beats || this.displayBeats;
-      const inDisplay = note => sourceStart <= note.t && note.t < sourceStart + sourceBeats;
-      const normalize = note => ({ ...note, t: note.t - sourceStart, d: Math.min(note.d, sourceStart + sourceBeats - note.t) });
-      let notes = this.uniqueChords(score.staffs[source.track].filter(note => note.v === 0 && inDisplay(note)).map(normalize));
-      if (!notes.length) notes = this.uniqueChords(score.staffs[source.track].filter(inDisplay).map(normalize));
+      let notes = this.extractSourceNotes(source);
       if (source.split_bars) notes = this.splitAtBars(notes, source.split_bars);
       const eventCount = Math.max(...notes.map(note => note.i)) + 1;
       return { ...source, notes, eventCount };
@@ -72,6 +67,30 @@ class CanonPlayer {
       seen.add(key);
       return true;
     });
+  }
+
+  extractSourceNotes(source) {
+    const sourceStart = source.start || 0;
+    const sourceBeats = source.beats || this.displayBeats;
+    let staff = this.score.staffs[source.track].filter(note => note.v === 0);
+    if (!staff.length) staff = this.score.staffs[source.track];
+    if (!source.sections) {
+      return this.uniqueChords(staff
+        .filter(note => sourceStart <= note.t && note.t < sourceStart + sourceBeats)
+        .map(note => ({ ...note, t: note.t - sourceStart, d: Math.min(note.d, sourceStart + sourceBeats - note.t) })));
+    }
+    let cursor = 0;
+    const notes = [];
+    for (const section of source.sections) {
+      for (const note of staff) {
+        const start = Math.max(note.t, section.start);
+        const end = Math.min(note.t + note.d, section.end);
+        if (end <= start) continue;
+        notes.push({ ...note, t: cursor + start - section.start, d: end - start });
+      }
+      cursor += section.end - section.start;
+    }
+    return this.uniqueChords(notes);
   }
 
   prepareInversions() {
@@ -224,12 +243,23 @@ class CanonPlayer {
       return source.notes.find(note => note.t <= sourceTime && note.t + note.d > sourceTime) || null;
     }
     if (line.map) {
-      let sourceTime = beat * line.map.scale + line.map.offset;
-      if (line.map.modulo) sourceTime = ((sourceTime % line.map.modulo) + line.map.modulo) % line.map.modulo;
+      const sourceTime = this.mappedSourceTime(line.map, beat);
+      if (sourceTime === null) return null;
       return source.notes.find(note => note.t <= sourceTime && note.t + note.d > sourceTime) || null;
     }
     const sourceOrdinal = ordinal % source.eventCount;
     return source.notes.find(note => note.i === sourceOrdinal) || null;
+  }
+
+  mappedSourceTime(map, beat) {
+    if (map.segments) {
+      const segment = map.segments.find(item => item.start <= beat && beat < item.end);
+      if (!segment) return null;
+      return segment.source + (beat - segment.start) * (segment.scale || 1);
+    }
+    let sourceTime = beat * map.scale + map.offset;
+    if (map.modulo) sourceTime = ((sourceTime % map.modulo) + map.modulo) % map.modulo;
+    return sourceTime;
   }
 
   trackMuted(trackIndex) {
@@ -328,7 +358,8 @@ class CanonPlayer {
       }
       ctx.globalAlpha = 1;
       const sourceDisplayBeats = geometry.sourceBeats;
-      const displayPosition = ((this.position + this.displayOffset) % sourceDisplayBeats + sourceDisplayBeats) % sourceDisplayBeats;
+      const mappedPosition = source.map ? this.mappedSourceTime(source.map, this.position) : this.position + this.displayOffset;
+      const displayPosition = ((mappedPosition % sourceDisplayBeats) + sourceDisplayBeats) % sourceDisplayBeats;
       const playPosition = this.rowAt(displayPosition, geometry);
       const playX = padX + (displayPosition - playPosition.start) / playPosition.beats * usable;
       const playTop = geometry.top + playPosition.row * geometry.rowHeight;
