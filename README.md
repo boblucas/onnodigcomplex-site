@@ -1,5 +1,7 @@
 # onnodigcomplex-site
 
+## [Read the live interactive essay: De canonische ruimte](https://boblucas.github.io/onnodigcomplex-site/)
+
 Personal website and interactive archive of work by Bob Lucassen. The site brings
 together software, constraint-solving projects, language experiments, puzzles,
 visual art, and music that previously lived across MuseScore, Reddit, GitHub,

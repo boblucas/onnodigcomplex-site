@@ -1,0 +1,61 @@
+name: Deploy canon essay to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/pages.yml"
+      - "README.md"
+      - "posts/de-ruimte-van-canons.html"
+      - "posts/onnodig.css"
+      - "posts/canon.css"
+      - "posts/canon-player.js"
+      - "posts/canon-data.json"
+      - "posts/audio/**"
+      - "Ubuntu/**"
+      - "Ubuntu_Mono/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare standalone essay
+        run: |
+          mkdir -p public/audio public/Ubuntu public/Ubuntu_Mono
+          cp posts/de-ruimte-van-canons.html public/index.html
+          cp posts/onnodig.css posts/canon.css posts/canon-player.js posts/canon-data.json public/
+          cp posts/audio/*.mp3 public/audio/
+          cp Ubuntu/Ubuntu-Light.ttf public/Ubuntu/
+          cp Ubuntu_Mono/UbuntuMono-Regular.ttf public/Ubuntu_Mono/
+          sed -i 's#../Ubuntu/#Ubuntu/#g; s#../Ubuntu_Mono/#Ubuntu_Mono/#g' public/onnodig.css
+          sed -i 's#href="index.html"#href="https://github.com/boblucas/onnodigcomplex-site"#g' public/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
