@@ -299,12 +299,24 @@ directories rather than embedding large data URLs in HTML.
 
 ## Deployment
 
-The repository can be deployed to any static host. Publish the repository root
-as-is; there is no build command and no generated distribution directory.
+The canon essay is published automatically at
+<https://boblucas.github.io/onnodigcomplex-site/> by
+`.github/workflows/pages.yml`. A push to `main` triggers a new deployment when
+the essay, player, generated data, audio, fonts, or workflow changes.
 
-For GitHub Pages, select the `main` branch and `/ (root)` as the publishing
-source in the repository's Pages settings. Other static hosts only need an
-equivalent root-directory configuration.
+The workflow creates a deliberately limited Pages artifact containing only:
+
+- the canon essay as the Pages root `index.html`;
+- its CSS, JavaScript, and generated JSON data;
+- the two font files used by the essay;
+- the MP3 performance stems referenced by the player.
+
+The rest of the personal website and post archive is not published to Pages.
+The deployment uses GitHub Actions rather than a branch or `/docs` publishing
+source. Its status is visible in the repository Actions tab.
+
+The complete repository can still be deployed to any static host as-is; there is
+no build command and no generated distribution directory.
 
 ## Browser and accessibility notes
 

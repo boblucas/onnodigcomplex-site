@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - ".github/workflows/pages.yml"
-      - "README.md"
       - "posts/de-ruimte-van-canons.html"
       - "posts/onnodig.css"
       - "posts/canon.css"
@@ -49,7 +48,7 @@ jobs:
           cp Ubuntu/Ubuntu-Light.ttf public/Ubuntu/
           cp Ubuntu_Mono/UbuntuMono-Regular.ttf public/Ubuntu_Mono/
           sed -i 's#../Ubuntu/#Ubuntu/#g; s#../Ubuntu_Mono/#Ubuntu_Mono/#g' public/onnodig.css
-          sed -i 's#href="index.html"#href="https://github.com/boblucas/onnodigcomplex-site"#g' public/index.html
+          sed -i 's#href="index.html"#href="https://github.com/boblucas/onnodigcomplex-site"#g; s#alle werken#broncode#g' public/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
