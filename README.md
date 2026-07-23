@@ -100,7 +100,6 @@ The page currently includes visualizations for:
 - *8 more canons on a shared harmony*
 - *Canon à 4, retrograde inversion & directus*
 - *8 canons at each interval on the same harmony*
-- *Fugue in G minor*
 - *Double canon*
 - *Double Modulating Canons*
 - *Double phasing modulation canon*
