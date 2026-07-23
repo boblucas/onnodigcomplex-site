@@ -75,37 +75,81 @@ const audio = {
 class CanonPlayer {
   constructor(element, score) {
     this.element = element;
-    this.score = score;
+    this.baseScore = score;
+    this.variantIndex = 0;
     this.canvas = element.querySelector("canvas");
     this.context2d = this.canvas.getContext("2d");
     this.button = element.querySelector(".play-button");
     this.range = element.querySelector("input[type=range]");
     this.timeLabel = element.querySelector(".player-time");
+    this.bpmLabel = element.querySelector(".player-bpm");
     this.voiceControl = element.querySelector(".voice-control");
-    this.displayBeats = score.visual.display_beats || score.beats;
-    this.displayOffset = score.visual.display_offset || 0;
-    this.wrapBeats = score.visual.wrap || (this.displayBeats > 40 ? 12 : 8);
-    this.rowBeats = score.visual.row_beats || null;
-    this.pickup = score.visual.pickup || 0;
-    this.swing = score.visual.swing || 0.5;
-    this.meter = score.visual.meter || 4;
-    this.performance = score.visual.performance || null;
-    this.playbackBpm = this.performance ? this.performance.bpm : score.bpm;
-    this.totalBeats = this.performance ? this.performance.duration * this.playbackBpm / 60 + this.performance.offset_beats : score.beats;
+    this.variationControl = element.querySelector(".variation-control");
+    this.position = 0;
+    this.playing = false;
+    this.startedAt = 0;
+    this.nodes = [];
+    this.configureScore();
+    this.bind();
+    this.buildVariationControl();
+    this.buildVoiceControl();
+    this.resize();
+  }
+
+  configureScore() {
+    const variant = this.baseScore.variations?.[this.variantIndex];
+    this.score = variant
+      ? { ...this.baseScore, ...variant, visual: this.baseScore.visual }
+      : this.baseScore;
+    this.displayBeats = this.score.visual.display_beats || this.score.beats;
+    this.displayOffset = this.score.visual.display_offset || 0;
+    this.rowBeats = this.score.visual.row_beats || null;
+    this.pickup = this.score.visual.pickup || 0;
+    this.swing = this.score.visual.swing || 0.5;
+    this.meter = variant?.meter || this.score.visual.meter || 4;
+    this.wrapBeats = variant
+      ? this.meter * 8
+      : this.score.visual.wrap || (this.displayBeats > 40 ? 12 : 8);
+    this.performance = this.score.visual.performance || null;
+    this.playbackBpm = this.performance ? this.performance.bpm : this.score.bpm;
+    this.totalBeats = this.performance
+      ? this.scoreBeat(this.performanceBeat(this.performance.duration)) + this.performance.offset_beats
+      : this.score.beats;
     this.performanceAudio = this.performance ? this.performance.stems.map(stem => {
       const element = new Audio(stem.src);
       element.preload = "auto";
       return { ...stem, element };
     }) : [];
-    this.position = 0;
-    this.playing = false;
-    this.startedAt = 0;
-    this.nodes = [];
-    this.lines = score.visual.lines;
-    this.sources = score.visual.sources.map(source => {
+    const groundMap = variant ? {
+      scale: 1,
+      offset: -variant.bass_offset,
+      modulo: this.meter * 8,
+      start: variant.bass_offset,
+    } : null;
+    this.lines = this.score.visual.lines.map((line, lineIndex) => {
+      const configured = { ...line, map: line.map ? { ...line.map } : undefined };
+      if (variant?.line_maps?.[lineIndex]) configured.map = { ...variant.line_maps[lineIndex] };
+      if (variant?.line_transforms?.[lineIndex]) configured.transform = variant.line_transforms[lineIndex];
+      if (variant?.line_directions?.[lineIndex]) configured.direction = variant.line_directions[lineIndex];
+      if (configured.ground_bass && groundMap) configured.map = { ...groundMap };
+      return configured;
+    });
+    this.sources = this.score.visual.sources.map((sourceDefinition, sourceIndex) => {
+      const source = { ...sourceDefinition, map: sourceDefinition.map ? { ...sourceDefinition.map } : undefined };
+      if (variant?.source_beats?.[sourceIndex]) source.beats = variant.source_beats[sourceIndex];
+      if (variant?.source_maps?.[sourceIndex]) source.map = { ...variant.source_maps[sourceIndex] };
+      if (source.ground_bass && groundMap) {
+        source.map = { ...groundMap };
+        source.beats = this.meter * 8;
+        source.notes = source.notes.map(note => ({
+          ...note,
+          t: note.t * this.meter / 4,
+          d: note.d * this.meter / 4,
+        }));
+      }
       let notes = this.extractSourceNotes(source);
       if (source.repeat_head) {
-        const heads = score.staffs[source.track]
+        const heads = this.score.staffs[source.track]
           .filter(note => note.v === 0 && Math.abs(note.t - source.repeat_head.at) < .0001)
           .map(note => ({ ...note, t: 0, p: note.p + source.repeat_head.semitones, y: note.y + source.repeat_head.y }));
         notes = [...heads, ...notes];
@@ -116,9 +160,47 @@ class CanonPlayer {
     });
     this.prepareInversions();
     this.muted = this.lines.map(() => false);
-    this.bind();
+    this.position = 0;
+    this.range.value = 0;
+    this.range.max = this.totalBeats;
+    const kind = this.performance ? "uitvoering" : "fragment";
+    const variationLabel = variant ? " · " + variant.short + " · " + variant.label : "";
+    this.bpmLabel.textContent = this.playbackBpm + " bpm · " + this.lines.length + " muzikale lijnen · " + kind + variationLabel;
+  }
+
+  buildVariationControl() {
+    const variants = this.baseScore.variations;
+    if (!variants?.length) {
+      this.variationControl.hidden = true;
+      return;
+    }
+    this.variationControl.hidden = false;
+    const tabs = variants.map((variant, index) =>
+      '<button type="button" role="tab" data-variant="' + index + '" aria-selected="' + (index === this.variantIndex) + '" title="' + variant.label + '">' + variant.short + '</button>'
+    ).join("");
+    this.variationControl.innerHTML = '<button class="variation-step" type="button" data-step="-1" title="Vorig interval" aria-label="Vorig interval">←</button>'
+      + '<div class="variation-tabs" role="tablist" aria-label="Canoninterval">' + tabs + '</div>'
+      + '<button class="variation-step" type="button" data-step="1" title="Volgend interval" aria-label="Volgend interval">→</button>'
+      + '<strong class="variation-name">' + variants[this.variantIndex].label + '</strong>';
+    this.variationControl.querySelectorAll("[data-variant]").forEach(button => {
+      button.addEventListener("click", () => this.setVariant(Number(button.dataset.variant)));
+    });
+    this.variationControl.querySelectorAll("[data-step]").forEach(button => {
+      button.addEventListener("click", () => this.setVariant(this.variantIndex + Number(button.dataset.step)));
+    });
+  }
+
+  setVariant(index) {
+    const variants = this.baseScore.variations;
+    const next = (index + variants.length) % variants.length;
+    if (next === this.variantIndex) return;
+    this.stop();
+    this.variantIndex = next;
+    this.configureScore();
+    this.buildVariationControl();
     this.buildVoiceControl();
     this.resize();
+    this.updateTime();
   }
 
   splitAtBars(notes, barBeats) {
@@ -147,6 +229,7 @@ class CanonPlayer {
   }
 
   extractSourceNotes(source) {
+    if (source.notes) return source.notes.map(note => ({ ...note }));
     const sourceStart = source.start || 0;
     const sourceBeats = source.beats || this.displayBeats;
     let staff = this.score.staffs[source.track].filter(note => note.v === 0);
@@ -174,7 +257,7 @@ class CanonPlayer {
     this.sources.forEach((source, sourceIndex) => {
       if (source.role === "bass") return;
       const lineIndexes = this.lines
-        .map((line, index) => line.source === sourceIndex && line.transform === "inversion" ? index : -1)
+        .map((line, index) => line.source === sourceIndex && this.lineUsesInversion(line) ? index : -1)
         .filter(index => index >= 0);
       if (!lineIndexes.length) return;
       const pitches = source.notes.map(note => note.y);
@@ -199,7 +282,7 @@ class CanonPlayer {
 
   buildVoiceControl() {
     this.voiceControl.innerHTML = this.lines.map((line, index) =>
-      `<button type="button" class="voice-swatch" style="--voice:${VOICE_COLORS[index % VOICE_COLORS.length]}" aria-pressed="true" title="Lijn ${line.label}${line.transform === "inversion" ? " (inversie)" : ""} aan- of uitzetten">${line.label}</button>`
+      `<button type="button" class="voice-swatch" style="--voice:${VOICE_COLORS[index % VOICE_COLORS.length]}" aria-pressed="true" title="Lijn ${line.label}${line.transform === "inversion" ? " (inversie)" : line.transform === "retrograde" ? " (retrograde)" : ""} aan- of uitzetten">${line.label}</button>`
     ).join("");
     [...this.voiceControl.children].forEach((button, index) => button.addEventListener("click", () => {
       const resume = this.playing;
@@ -271,6 +354,7 @@ class CanonPlayer {
     if (source.modulation) offsets.push(...source.modulation.layers.map(layer => layer.y));
     for (const line of this.lines.filter(line => line.source === sourceIndex && line.modulation)) {
       offsets.push(...line.modulation.layers.map(layer => layer.y));
+      if (line.shepard) offsets.push(-line.shepard.octave_y, line.shepard.octave_y);
     }
     const pitches = source.notes.flatMap(item => offsets.map(offset => item.y + offset));
     const low = Math.min(...pitches) - 1;
@@ -314,6 +398,7 @@ class CanonPlayer {
   }
 
   activeSourceNote(line, beat) {
+    if (this.performance?.music_beats != null && beat >= this.performance.music_beats) return null;
     const scoreBeat = this.performance ? beat % this.score.beats : beat;
     const ordinal = this.activeOrdinal(line.tracks, scoreBeat);
     const source = this.sources[line.source];
@@ -337,7 +422,24 @@ class CanonPlayer {
     return source.notes.find(note => note.i === sourceOrdinal) || null;
   }
 
+  mappedSegment(map, beat) {
+    return map?.segments?.find(item => item.start <= beat && beat < item.end) || null;
+  }
+
+  lineUsesInversion(line) {
+    return line.transform === "inversion"
+      || Boolean(line.map?.segments?.some(segment => segment.transform === "inversion"));
+  }
+
+  lineInvertedAt(line, beat) {
+    const base = line.transform === "inversion";
+    const segment = this.mappedSegment(line.map, beat);
+    return segment?.transform === "inversion" ? !base : base;
+  }
+
   mappedSourceTime(map, beat) {
+    if (map.start != null && beat < map.start) return null;
+    if (map.end != null && beat >= map.end) return null;
     if (map.segments) {
       const segment = map.segments.find(item => item.start <= beat && beat < item.end);
       if (!segment) return null;
@@ -359,11 +461,91 @@ class CanonPlayer {
   }
 
   displayNote(note, line, beat) {
-    const transformed = line.transform === "inversion"
+    const transformed = this.lineInvertedAt(line, beat)
       ? this.invertedNote(note, line.source)
       : note;
     const layer = this.modulationLayer(line, beat);
     return layer ? { ...transformed, y: transformed.y + layer.y } : transformed;
+  }
+
+  shepardGenerationY(line, generation) {
+    const modulation = line.modulation;
+    const shepard = line.shepard;
+    const cycles = shepard.cycles || modulation.layers.length;
+    const positionAt = index => {
+      const octave = Math.floor(index / cycles);
+      const layerIndex = ((index % cycles) + cycles) % cycles;
+      return octave * shepard.direction * shepard.octave_y + modulation.layers[layerIndex].y;
+    };
+    const start = Math.floor(generation);
+    const phase = generation - start;
+    const from = positionAt(start);
+    return from + (positionAt(start + 1) - from) * phase;
+  }
+
+  shepardCopies(line, beat) {
+    const modulation = line.modulation;
+    const shepard = line.shepard;
+    if (!modulation || !shepard || !line.map) return [];
+    const unwrapped = beat * line.map.scale + line.map.offset;
+    if (unwrapped < 0) return [];
+    const progress = unwrapped / modulation.period;
+    const currentGeneration = Math.floor(progress);
+    const travel = this.shepardGenerationY(line, progress);
+    const copies = [];
+    for (let generation = currentGeneration - shepard.cycles - 1; generation <= currentGeneration + shepard.cycles + 1; generation++) {
+      const y = this.shepardGenerationY(line, generation) - travel;
+      const alpha = Math.max(0, 1 - Math.abs(y) / shepard.octave_y);
+      if (alpha > .001) copies.push({ generation, y, alpha });
+    }
+    return copies;
+  }
+
+  activeShepardCopy(line, beat) {
+    const modulation = line.modulation;
+    if (!modulation || !line.map) return null;
+    const unwrapped = beat * line.map.scale + line.map.offset;
+    if (unwrapped < 0) return null;
+    const currentGeneration = Math.floor(unwrapped / modulation.period);
+    return this.shepardCopies(line, beat).find(copy => copy.generation === currentGeneration) || null;
+  }
+
+  shepardNoteAlpha(line, beat, generation, note) {
+    const modulation = line.modulation;
+    const shepard = line.shepard;
+    const unwrapped = beat * line.map.scale + line.map.offset;
+    const start = generation * modulation.period + note.t;
+    const end = start + note.d;
+    const distance = unwrapped < start
+      ? start - unwrapped
+      : unwrapped > end ? unwrapped - end : 0;
+    const window = modulation.period * (shepard.time_window_cycles || 1);
+    return Math.max(0, 1 - distance / window);
+  }
+
+  drawShepardLine(line, lineIndex, sourceIndex, beat) {
+    const source = this.sources[sourceIndex];
+    const inverted = line.transform === "inversion";
+    const copies = this.shepardCopies(line, beat);
+    if (!copies.length) return;
+    const ctx = this.context2d;
+    ctx.save();
+    ctx.fillStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
+    ctx.strokeStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
+    for (const copy of copies) {
+      for (const note of source.notes) {
+        const transformed = inverted ? this.invertedNote(note, sourceIndex) : note;
+        const timeAlpha = this.shepardNoteAlpha(line, beat, copy.generation, note);
+        if (timeAlpha <= .001) continue;
+        for (const box of this.noteBoxes({ ...transformed, y: transformed.y + copy.y }, sourceIndex, inverted)) {
+          ctx.globalAlpha = timeAlpha * .38;
+          ctx.fillRect(box.x, box.y, box.width, box.height);
+          ctx.globalAlpha = timeAlpha * .72;
+          ctx.strokeRect(box.x + .5, box.y + .5, Math.max(0, box.width - 1), Math.max(0, box.height - 1));
+        }
+      }
+    }
+    ctx.restore();
   }
 
   trackMuted(trackIndex) {
@@ -379,7 +561,9 @@ class CanonPlayer {
     ctx.fillRect(0, 0, this.width, this.height);
     const padX = 18;
     const usable = this.width - padX * 2;
-    const visualBeat = this.position % this.score.beats;
+    const visualBeat = this.performance?.music_beats != null && this.position >= this.performance.music_beats
+      ? this.performance.music_beats - .0001
+      : this.position % this.score.beats;
     ctx.textBaseline = "middle";
 
     this.sources.forEach((source, sourceIndex) => {
@@ -441,7 +625,13 @@ class CanonPlayer {
           ctx.restore();
         }
       }
-      if (source.modulation) {
+      const directShepard = this.lines.some(line =>
+        line.source === sourceIndex && line.shepard && line.transform !== "inversion"
+      );
+      const inverseShepard = this.lines.some(line =>
+        line.source === sourceIndex && line.shepard && line.transform === "inversion"
+      );
+      if (source.modulation && !directShepard) {
         const colorIndex = this.lines.findIndex(line => line.source === sourceIndex);
         ctx.save();
         ctx.fillStyle = VOICE_COLORS[colorIndex % VOICE_COLORS.length];
@@ -460,7 +650,7 @@ class CanonPlayer {
       }
       if (source.inversion) {
         const colorIndex = source.inversion.lineIndexes.find(index => !this.muted[index]);
-        if (colorIndex !== undefined) {
+        if (colorIndex !== undefined && !inverseShepard) {
           ctx.save();
           ctx.fillStyle = VOICE_COLORS[colorIndex % VOICE_COLORS.length];
           ctx.strokeStyle = VOICE_COLORS[colorIndex % VOICE_COLORS.length];
@@ -476,7 +666,7 @@ class CanonPlayer {
         for (const lineIndex of source.inversion.lineIndexes) {
           const line = this.lines[lineIndex];
           const modulation = line.modulation || source.modulation;
-          if (!modulation || this.muted[lineIndex]) continue;
+          if (!modulation || this.muted[lineIndex] || line.shepard) continue;
           ctx.save();
           ctx.fillStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
           ctx.strokeStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
@@ -494,22 +684,31 @@ class CanonPlayer {
           ctx.restore();
         }
       }
-      for (const note of source.notes) {
-        for (const box of this.noteBoxes(note, sourceIndex)) {
-          ctx.fillStyle = geometry.bass ? "#77778a" : "#d9d5c5";
-          ctx.globalAlpha = geometry.bass ? .62 : 1;
-          ctx.fillRect(box.x, box.y, box.width, box.height);
+      this.lines.forEach((line, lineIndex) => {
+        if (line.source === sourceIndex && line.shepard && !this.muted[lineIndex]) {
+          this.drawShepardLine(line, lineIndex, sourceIndex, this.position);
+        }
+      });
+      if (!directShepard) {
+        for (const note of source.notes) {
+          for (const box of this.noteBoxes(note, sourceIndex)) {
+            ctx.fillStyle = geometry.bass ? "#77778a" : "#d9d5c5";
+            ctx.globalAlpha = geometry.bass ? .62 : 1;
+            ctx.fillRect(box.x, box.y, box.width, box.height);
+          }
         }
       }
       ctx.globalAlpha = 1;
       const sourceDisplayBeats = geometry.sourceBeats;
       const mappedPosition = source.map ? this.mappedSourceTime(source.map, visualBeat) : visualBeat + this.displayOffset;
-      const displayPosition = ((mappedPosition % sourceDisplayBeats) + sourceDisplayBeats) % sourceDisplayBeats;
-      const playPosition = this.rowAt(displayPosition, geometry);
-      const playX = padX + (displayPosition - playPosition.start) / playPosition.beats * usable;
-      const playTop = geometry.top + playPosition.row * geometry.rowHeight;
-      ctx.strokeStyle = geometry.bass ? "#77778a" : "#f4f0df";
-      ctx.beginPath(); ctx.moveTo(playX, playTop); ctx.lineTo(playX, playTop + geometry.pitchArea + 14); ctx.stroke();
+      if (mappedPosition != null) {
+        const displayPosition = ((mappedPosition % sourceDisplayBeats) + sourceDisplayBeats) % sourceDisplayBeats;
+        const playPosition = this.rowAt(displayPosition, geometry);
+        const playX = padX + (displayPosition - playPosition.start) / playPosition.beats * usable;
+        const playTop = geometry.top + playPosition.row * geometry.rowHeight;
+        ctx.strokeStyle = geometry.bass ? "#77778a" : "#f4f0df";
+        ctx.beginPath(); ctx.moveTo(playX, playTop); ctx.lineTo(playX, playTop + geometry.pitchArea + 14); ctx.stroke();
+      }
     });
 
     const directionArrows = [];
@@ -517,7 +716,20 @@ class CanonPlayer {
       if (this.muted[lineIndex]) return;
       const note = this.activeSourceNote(line, this.position);
       if (!note) return;
-      const inverted = line.transform === "inversion";
+      const inverted = this.lineInvertedAt(line, this.position);
+      if (line.shepard) {
+        const transformed = inverted ? this.invertedNote(note, line.source) : note;
+        const copy = this.activeShepardCopy(line, this.position);
+        if (!copy) return;
+        ctx.save();
+        ctx.fillStyle = VOICE_COLORS[lineIndex % VOICE_COLORS.length];
+        for (const box of this.noteBoxes({ ...transformed, y: transformed.y + copy.y }, line.source, inverted)) {
+          ctx.globalAlpha = .95;
+          ctx.fillRect(box.x - 2, box.y - 2 - lineIndex, box.width + 4, box.height + 4);
+        }
+        ctx.restore();
+        return;
+      }
       const boxes = this.noteBoxes(this.displayNote(note, line, this.position), line.source, inverted);
       if (inverted) {
         ctx.save();
@@ -567,10 +779,41 @@ class CanonPlayer {
     return whole + 0.5 + (fraction - this.swing) * 0.5 / (1 - this.swing);
   }
 
+  performanceSeconds(beat) {
+    const target = Math.max(0, beat);
+    const map = this.performance.tempo_map || [{ beat: 0, bpm: this.playbackBpm }];
+    let seconds = 0;
+    for (let index = 0; index < map.length; index++) {
+      const entry = map[index];
+      const nextBeat = map[index + 1]?.beat;
+      if (nextBeat == null || target <= nextBeat) {
+        return seconds + (target - entry.beat) * 60 / entry.bpm;
+      }
+      seconds += (nextBeat - entry.beat) * 60 / entry.bpm;
+    }
+    return seconds;
+  }
+
+  performanceBeat(seconds) {
+    const target = Math.max(0, seconds);
+    const map = this.performance.tempo_map || [{ beat: 0, bpm: this.playbackBpm }];
+    let elapsed = 0;
+    for (let index = 0; index < map.length; index++) {
+      const entry = map[index];
+      const nextBeat = map[index + 1]?.beat;
+      if (nextBeat == null) return entry.beat + (target - elapsed) * entry.bpm / 60;
+      const segmentSeconds = (nextBeat - entry.beat) * 60 / entry.bpm;
+      if (target <= elapsed + segmentSeconds) {
+        return entry.beat + (target - elapsed) * entry.bpm / 60;
+      }
+      elapsed += segmentSeconds;
+    }
+    return 0;
+  }
+
   performancePosition() {
-    const visualSeconds = this.position * 60 / this.playbackBpm;
-    const offsetSeconds = this.performance.offset_beats * 60 / this.playbackBpm;
-    return Math.max(0, Math.min(this.performance.duration, visualSeconds - offsetSeconds));
+    const scorePosition = Math.max(0, this.position - this.performance.offset_beats);
+    return Math.min(this.performance.duration, this.performanceSeconds(this.audioBeat(scorePosition)));
   }
 
   syncPerformanceMute() {
@@ -579,16 +822,30 @@ class CanonPlayer {
     });
   }
 
+  async preparePerformanceAudio(start) {
+    const elements = this.performanceAudio.map(stem => stem.element);
+    elements.forEach(element => {
+      element.pause();
+      element.playbackRate = 1;
+    });
+    await Promise.all(elements.map(element => element.readyState >= 1
+      ? Promise.resolve()
+      : new Promise(resolve => element.addEventListener("loadedmetadata", resolve, { once: true }))));
+    elements.forEach(element => { element.currentTime = start; });
+    await Promise.all(elements.map(element => element.seeking
+      ? new Promise(resolve => element.addEventListener("seeked", resolve, { once: true }))
+      : Promise.resolve()));
+    await Promise.all(elements.map(element => element.readyState >= 3
+      ? Promise.resolve()
+      : new Promise(resolve => element.addEventListener("canplay", resolve, { once: true }))));
+  }
+
   async playPerformance() {
     const start = this.performancePosition();
     const waitBeats = Math.max(0, this.performance.offset_beats - this.position);
     const waitMs = waitBeats * 60000 / this.playbackBpm;
     this.syncPerformanceMute();
-    this.performanceAudio.forEach(stem => {
-      stem.element.pause();
-      stem.element.currentTime = start;
-      stem.element.playbackRate = 1;
-    });
+    await this.preparePerformanceAudio(start);
     this.playing = true;
     this.performanceWaiting = waitMs > 0;
     this.performanceStartedAt = performance.now() / 1000 - this.position * 60 / this.playbackBpm;
@@ -652,11 +909,12 @@ class CanonPlayer {
     const audioPosition = this.performance
       ? this.performanceWaiting
         ? (performance.now() / 1000 - this.performanceStartedAt) / secondsPerBeat
-        : this.performance.offset_beats + this.performanceAudio[0].element.currentTime / secondsPerBeat
+        : this.performance.offset_beats + this.performanceBeat(this.performanceAudio[0].element.currentTime)
       : (audio.context.currentTime - this.startedAt) / secondsPerBeat;
     this.position = this.scoreBeat(audioPosition);
     if (this.position >= this.totalBeats) {
       this.position = 0;
+      this.range.value = 0;
       this.stop(false);
       this.draw(); this.updateTime();
       return;
@@ -684,8 +942,15 @@ class CanonPlayer {
   }
 
   updateTime() {
-    const total = this.totalBeats * 60 / this.playbackBpm;
-    const current = this.position * 60 / this.playbackBpm;
+    let total = this.totalBeats * 60 / this.playbackBpm;
+    let current = this.position * 60 / this.playbackBpm;
+    if (this.performance) {
+      const offsetSeconds = this.performance.offset_beats * 60 / this.playbackBpm;
+      total = offsetSeconds + this.performance.duration;
+      current = this.position < this.performance.offset_beats
+        ? this.position * 60 / this.playbackBpm
+        : offsetSeconds + this.performanceSeconds(this.audioBeat(this.position - this.performance.offset_beats));
+    }
     this.timeLabel.textContent = `${this.clock(current)} / ${this.clock(total)}`;
   }
 
@@ -704,7 +969,7 @@ fetch("canon-data.json")
     document.querySelectorAll(".canon-player").forEach(element => {
       const score = byId.get(element.dataset.score);
       if (!score) return;
-      element.innerHTML = `<div class="player-toolbar">
+      element.innerHTML = `<div class="variation-control" hidden></div><div class="player-toolbar">
         <button class="play-button" type="button" title="Afspelen" aria-label="Afspelen">▶</button>
         <input type="range" min="0" value="0" step="0.02" aria-label="Afspeelpositie">
         <span class="player-time">0:00</span>
